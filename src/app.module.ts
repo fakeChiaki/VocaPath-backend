@@ -14,6 +14,7 @@ import { PaesDatesModule } from './paes-dates/paes-dates.module.js';
 import { ScoresModule } from './scores/scores.module.js';
 import { PaesTestsModule } from './paes-tests/paes-tests.module.js';
 import { VocationalTestsModule } from './vocational-tests/vocational-tests.module.js';
+import { SimulatorModule } from './simulator/simulator.module.js';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { VocationalTestsModule } from './vocational-tests/vocational-tests.modul
     ScoresModule,
     PaesTestsModule,
     VocationalTestsModule,
+    SimulatorModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
