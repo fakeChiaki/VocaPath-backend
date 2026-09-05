@@ -1,0 +1,1 @@
+ALTER TABLE "paes_questions" ADD CONSTRAINT "paes_questions_subject_mencion_text_unique" UNIQUE("subject","mencion","text");

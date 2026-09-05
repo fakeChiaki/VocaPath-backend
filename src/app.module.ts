@@ -11,6 +11,8 @@ import { UniversitiesModule } from './universities/universities.module.js';
 import { CareersModule } from './careers/careers.module.js';
 import { FavoritesModule } from './favorites/favorites.module.js';
 import { PaesDatesModule } from './paes-dates/paes-dates.module.js';
+import { ScoresModule } from './scores/scores.module.js';
+import { PaesTestsModule } from './paes-tests/paes-tests.module.js';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { PaesDatesModule } from './paes-dates/paes-dates.module.js';
     CareersModule,
     FavoritesModule,
     PaesDatesModule,
+    ScoresModule,
+    PaesTestsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
