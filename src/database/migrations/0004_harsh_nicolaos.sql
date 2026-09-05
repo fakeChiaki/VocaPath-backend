@@ -1,0 +1,2 @@
+ALTER TABLE "vocational_questions" ADD CONSTRAINT "vocational_questions_text_unique" UNIQUE("text");--> statement-breakpoint
+ALTER TABLE "vocational_options" ADD CONSTRAINT "vocational_options_question_label_unique" UNIQUE("question_id","label");
