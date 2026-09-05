@@ -8,6 +8,8 @@ import {
   careers,
   paesDates,
   paesQuestions,
+  vocationalQuestions,
+  vocationalOptions,
   type CareerWeights,
   type PaesSubject,
   type MencionCiencias,
@@ -387,6 +389,65 @@ const paesQuestionsSeed: PaesQuestionSeed[] = [
   },
 ];
 
+interface VocationalQuestionSeed {
+  text: string;
+  position: number;
+  options: { label: string; areaCode: string; position: number }[];
+}
+
+const vocationalQuestionsSeed: VocationalQuestionSeed[] = [
+  {
+    text: '¿Qué actividad disfrutas más en tu tiempo libre?',
+    position: 1,
+    options: [
+      { label: 'Resolver problemas de lógica o programar', areaCode: 'ingenieria', position: 1 },
+      { label: 'Cuidar o ayudar a otras personas', areaCode: 'salud', position: 2 },
+      { label: 'Leer, escribir o debatir ideas', areaCode: 'social', position: 3 },
+      { label: 'Dibujar, diseñar o crear cosas', areaCode: 'arte', position: 4 },
+    ],
+  },
+  {
+    text: '¿En qué asignatura te va mejor?',
+    position: 2,
+    options: [
+      { label: 'Matemática', areaCode: 'ingenieria', position: 1 },
+      { label: 'Biología / Química', areaCode: 'salud', position: 2 },
+      { label: 'Lenguaje / Historia', areaCode: 'social', position: 3 },
+      { label: 'Economía / Emprendimiento', areaCode: 'negocios', position: 4 },
+    ],
+  },
+  {
+    text: '¿Qué tipo de impacto te gustaría tener?',
+    position: 3,
+    options: [
+      { label: 'Mejorar la salud de las personas', areaCode: 'salud', position: 1 },
+      { label: 'Educar y formar a otros', areaCode: 'educacion', position: 2 },
+      { label: 'Defender la justicia y los derechos', areaCode: 'derecho', position: 3 },
+      { label: 'Crear productos o negocios innovadores', areaCode: 'negocios', position: 4 },
+    ],
+  },
+  {
+    text: '¿Cómo prefieres trabajar?',
+    position: 4,
+    options: [
+      { label: 'Con tecnología y datos', areaCode: 'ingenieria', position: 1 },
+      { label: 'En equipo, con mucha gente', areaCode: 'social', position: 2 },
+      { label: 'Con creatividad y diseño', areaCode: 'arte', position: 3 },
+      { label: 'Liderando y tomando decisiones', areaCode: 'negocios', position: 4 },
+    ],
+  },
+  {
+    text: '¿Qué frase te representa más?',
+    position: 5,
+    options: [
+      { label: 'Quiero entender cómo funciona todo', areaCode: 'ingenieria', position: 1 },
+      { label: 'Quiero cuidar y sanar a los demás', areaCode: 'salud', position: 2 },
+      { label: 'Quiero enseñar y dejar huella', areaCode: 'educacion', position: 3 },
+      { label: 'Quiero comunicar y mover ideas', areaCode: 'social', position: 4 },
+    ],
+  },
+];
+
 const DEMRE_SOURCE_URL = 'https://demre.cl';
 
 const paesDatesSeed = [
@@ -522,6 +583,24 @@ async function seed() {
     .insert(paesQuestions)
     .values(paesQuestionsSeed)
     .onConflictDoNothing({ target: [paesQuestions.subject, paesQuestions.mencion, paesQuestions.text] });
+
+  for (const question of vocationalQuestionsSeed) {
+    await db
+      .insert(vocationalQuestions)
+      .values({ text: question.text, position: question.position })
+      .onConflictDoNothing({ target: vocationalQuestions.text });
+
+    const [row] = await db
+      .select()
+      .from(vocationalQuestions)
+      .where(eq(vocationalQuestions.text, question.text))
+      .limit(1);
+
+    await db
+      .insert(vocationalOptions)
+      .values(question.options.map((o) => ({ questionId: row.id, ...o })))
+      .onConflictDoNothing({ target: [vocationalOptions.questionId, vocationalOptions.label] });
+  }
 
   console.log('Seed completado');
   await client.end();

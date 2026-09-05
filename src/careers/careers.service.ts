@@ -61,6 +61,13 @@ export class CareersService {
     return this.baseQuery().where(inArray(careers.id, ids));
   }
 
+  findByAreaCodes(areaCodes: string[]) {
+    if (areaCodes.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.baseQuery().where(inArray(careers.areaCode, areaCodes));
+  }
+
   async findById(id: string) {
     const [career] = await this.baseQuery().where(eq(careers.id, id)).limit(1);
     if (!career) {
