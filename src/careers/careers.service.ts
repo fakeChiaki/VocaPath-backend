@@ -68,4 +68,13 @@ export class CareersService {
     }
     return career;
   }
+
+  async compare(ids: string[]) {
+    const uniqueIds = Array.from(new Set(ids));
+    const results = await this.findByIds(uniqueIds);
+    if (results.length !== uniqueIds.length) {
+      throw new NotFoundException('Una o más carreras no fueron encontradas');
+    }
+    return uniqueIds.map((id) => results.find((career) => career.id === id)!);
+  }
 }
