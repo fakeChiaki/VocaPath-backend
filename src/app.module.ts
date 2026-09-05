@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
 import { UniversitiesModule } from './universities/universities.module.js';
 import { CareersModule } from './careers/careers.module.js';
+import { FavoritesModule } from './favorites/favorites.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CareersModule } from './careers/careers.module.js';
     AuthModule,
     UniversitiesModule,
     CareersModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

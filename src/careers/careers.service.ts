@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, eq, ilike, inArray } from 'drizzle-orm';
 import { DRIZZLE_CLIENT } from '../database/database.constants.js';
 import type { DrizzleDb } from '../database/database.types.js';
 import { areas, careers, universities } from '../database/schema/index.js';
@@ -52,6 +52,13 @@ export class CareersService {
 
     const query = this.baseQuery();
     return conditions.length ? query.where(and(...conditions)) : query;
+  }
+
+  findByIds(ids: string[]) {
+    if (ids.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.baseQuery().where(inArray(careers.id, ids));
   }
 
   async findById(id: string) {
