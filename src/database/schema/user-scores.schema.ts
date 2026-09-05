@@ -12,7 +12,7 @@ export const userScores = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     factor: scoreFactorEnum('factor').notNull(),
-    value: numeric('value', { precision: 6, scale: 2 }).notNull(),
+    value: numeric('value', { precision: 6, scale: 2, mode: 'number' }).notNull(),
     source: scoreSourceEnum('source').notNull(),
     attemptId: uuid('attempt_id').references(() => paesAttempts.id, { onDelete: 'cascade' }),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
