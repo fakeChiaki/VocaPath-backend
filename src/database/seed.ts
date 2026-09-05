@@ -2,7 +2,16 @@ import 'dotenv/config';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm';
-import { areas, universities, careers, paesDates, type CareerWeights } from './schema/index.js';
+import {
+  areas,
+  universities,
+  careers,
+  paesDates,
+  paesQuestions,
+  type CareerWeights,
+  type PaesSubject,
+  type MencionCiencias,
+} from './schema/index.js';
 
 const areasSeed = [
   { code: 'salud', label: 'Salud' },
@@ -199,6 +208,185 @@ const careersSeed: CareerSeed[] = [
   },
 ];
 
+interface PaesQuestionSeed {
+  subject: PaesSubject;
+  mencion: MencionCiencias;
+  text: string;
+  options: string[];
+  correctIndex: number;
+}
+
+const paesQuestionsSeed: PaesQuestionSeed[] = [
+  {
+    subject: 'lectora',
+    mencion: 'ninguna',
+    text: '¿Cuál es la función del conector "no obstante"?',
+    options: ['Añadir información', 'Expresar contraste', 'Indicar causa', 'Ordenar ideas'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'lectora',
+    mencion: 'ninguna',
+    text: 'Un texto argumentativo busca principalmente:',
+    options: ['Narrar hechos', 'Convencer al lector', 'Describir un lugar', 'Entretener'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'lectora',
+    mencion: 'ninguna',
+    text: 'La idea principal de un párrafo suele estar en:',
+    options: ['La oración temática', 'Una nota al pie', 'El título del libro', 'La bibliografía'],
+    correctIndex: 0,
+  },
+  {
+    subject: 'lectora',
+    mencion: 'ninguna',
+    text: '"Sinónimo" significa palabra de significado:',
+    options: ['Opuesto', 'Similar', 'Técnico', 'Extranjero'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'matematica',
+    mencion: 'ninguna',
+    text: '¿Cuánto es 15% de 240?',
+    options: ['24', '36', '30', '45'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'matematica',
+    mencion: 'ninguna',
+    text: 'Si x + 7 = 12, entonces x =',
+    options: ['4', '5', '6', '19'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'matematica',
+    mencion: 'ninguna',
+    text: 'El área de un triángulo de base 8 y altura 5 es:',
+    options: ['20', '40', '13', '26'],
+    correctIndex: 0,
+  },
+  {
+    subject: 'matematica',
+    mencion: 'ninguna',
+    text: '¿Cuál es el promedio de 4, 8 y 12?',
+    options: ['6', '8', '10', '12'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'historia',
+    mencion: 'ninguna',
+    text: 'La Constitución vigente de Chile fue promulgada en:',
+    options: ['1925', '1980', '1990', '2005'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'historia',
+    mencion: 'ninguna',
+    text: '¿Qué poder del Estado crea las leyes?',
+    options: ['Ejecutivo', 'Legislativo', 'Judicial', 'Municipal'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'historia',
+    mencion: 'ninguna',
+    text: 'La Revolución Industrial se inició en:',
+    options: ['Francia', 'Inglaterra', 'Alemania', 'EE.UU.'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'historia',
+    mencion: 'ninguna',
+    text: 'El PIB mide principalmente:',
+    options: ['La población', 'La producción de bienes y servicios', 'El clima', 'La educación'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'biologia',
+    text: 'La unidad básica de la vida es:',
+    options: ['El átomo', 'La célula', 'El tejido', 'La molécula'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'biologia',
+    text: '¿Qué órgano bombea la sangre?',
+    options: ['Pulmón', 'Corazón', 'Hígado', 'Riñón'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'biologia',
+    text: 'La fotosíntesis ocurre principalmente en:',
+    options: ['Las hojas', 'La raíz', 'El tallo', 'La flor'],
+    correctIndex: 0,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'biologia',
+    text: 'La molécula que contiene la información genética es:',
+    options: ['La proteína', 'La glucosa', 'El ADN', 'El lípido'],
+    correctIndex: 2,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'fisica',
+    text: 'La fuerza que atrae los objetos a la Tierra es:',
+    options: ['Magnetismo', 'Gravedad', 'Fricción', 'Tensión'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'fisica',
+    text: 'La unidad de fuerza en el Sistema Internacional es:',
+    options: ['El newton', 'El joule', 'El watt', 'El pascal'],
+    correctIndex: 0,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'fisica',
+    text: 'La rapidez media se calcula como:',
+    options: ['distancia × tiempo', 'masa × aceleración', 'distancia / tiempo', 'tiempo / distancia'],
+    correctIndex: 2,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'fisica',
+    text: 'El sonido NO se propaga en:',
+    options: ['El agua', 'El vacío', 'El aire', 'Los sólidos'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'quimica',
+    text: 'El agua está compuesta por hidrógeno y:',
+    options: ['Carbono', 'Oxígeno', 'Nitrógeno', 'Helio'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'quimica',
+    text: 'El pH de una solución neutra es:',
+    options: ['0', '7', '14', '1'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'quimica',
+    text: 'El símbolo químico del sodio es:',
+    options: ['S', 'Na', 'So', 'N'],
+    correctIndex: 1,
+  },
+  {
+    subject: 'ciencias',
+    mencion: 'quimica',
+    text: 'El cambio de estado de líquido a gas se llama:',
+    options: ['Condensación', 'Fusión', 'Evaporación', 'Solidificación'],
+    correctIndex: 2,
+  },
+];
+
 const DEMRE_SOURCE_URL = 'https://demre.cl';
 
 const paesDatesSeed = [
@@ -329,6 +517,11 @@ async function seed() {
     .insert(paesDates)
     .values(paesDatesSeed.map((d) => ({ ...d, sourceUrl: DEMRE_SOURCE_URL })))
     .onConflictDoNothing({ target: [paesDates.phase, paesDates.title] });
+
+  await db
+    .insert(paesQuestions)
+    .values(paesQuestionsSeed)
+    .onConflictDoNothing({ target: [paesQuestions.subject, paesQuestions.mencion, paesQuestions.text] });
 
   console.log('Seed completado');
   await client.end();

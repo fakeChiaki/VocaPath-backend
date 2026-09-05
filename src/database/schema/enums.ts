@@ -6,6 +6,7 @@ export const paesSubjectEnum = pgEnum('paes_subject', [
   'historia',
   'ciencias',
 ]);
+export type PaesSubject = (typeof paesSubjectEnum.enumValues)[number];
 
 export const mencionCienciasEnum = pgEnum('mencion_ciencias', [
   'ninguna',
@@ -13,6 +14,7 @@ export const mencionCienciasEnum = pgEnum('mencion_ciencias', [
   'fisica',
   'quimica',
 ]);
+export type MencionCiencias = (typeof mencionCienciasEnum.enumValues)[number];
 
 export const scoreFactorEnum = pgEnum('score_factor', [
   'lectora',
@@ -22,6 +24,7 @@ export const scoreFactorEnum = pgEnum('score_factor', [
   'nem',
   'ranking',
 ]);
+export type ScoreFactor = (typeof scoreFactorEnum.enumValues)[number];
 
 export const scoreSourceEnum = pgEnum('score_source', ['manual', 'paes_attempt']);
 
