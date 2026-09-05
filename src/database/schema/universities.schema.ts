@@ -2,7 +2,7 @@ import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const universities = pgTable('universities', {
   id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name').notNull(),
+  name: text('name').notNull().unique(),
   fullName: text('full_name').notNull(),
   city: text('city').notNull(),
   color: text('color').notNull(),

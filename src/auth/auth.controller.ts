@@ -12,8 +12,8 @@ import {
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { CurrentUser } from './decorators/current-user.decorator.js';
+import { Public } from './decorators/public.decorator.js';
 import { RegisterDto } from './dto/register.dto.js';
-import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { LocalAuthGuard } from './guards/local-auth.guard.js';
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token';
@@ -23,12 +23,14 @@ const REFRESH_TOKEN_COOKIE_PATH = '/auth';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -38,6 +40,7 @@ export class AuthController {
     return { accessToken, user };
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -51,7 +54,6 @@ export class AuthController {
     return { accessToken };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {

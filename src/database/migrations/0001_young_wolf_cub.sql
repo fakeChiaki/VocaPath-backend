@@ -1,0 +1,1 @@
+ALTER TABLE "universities" ADD CONSTRAINT "universities_name_unique" UNIQUE("name");

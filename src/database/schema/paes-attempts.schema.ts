@@ -11,7 +11,7 @@ export const paesAttempts = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     subject: paesSubjectEnum('subject').notNull(),
     mencion: mencionCienciasEnum('mencion').notNull().default('ninguna'),
-    score: numeric('score', { precision: 6, scale: 2 }).notNull(),
+    score: numeric('score', { precision: 6, scale: 2, mode: 'number' }).notNull(),
     correctCount: integer('correct_count').notNull(),
     totalCount: integer('total_count').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
