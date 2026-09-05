@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
 import { UniversitiesModule } from './universities/universities.module.js';
 import { CareersModule } from './careers/careers.module.js';
 import { FavoritesModule } from './favorites/favorites.module.js';
+import { PaesDatesModule } from './paes-dates/paes-dates.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FavoritesModule } from './favorites/favorites.module.js';
     UniversitiesModule,
     CareersModule,
     FavoritesModule,
+    PaesDatesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
