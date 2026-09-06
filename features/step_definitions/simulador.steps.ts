@@ -75,3 +75,39 @@ Then('el sistema despliega el desglose ponderado factor por factor', function ()
     // Validación de la estructura de respuesta completa
     expect(simulationResult).toHaveProperty('career');
 });
+
+Given('que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente {string}', function (string) {
+    const targetScore = parseFloat(string);
+    userScores = [
+        { factor: 'nem', value: targetScore },
+        { factor: 'ranking', value: targetScore },
+        { factor: 'language', value: targetScore },
+        { factor: 'math', value: targetScore },
+        { factor: 'science', value: targetScore }
+    ];
+});
+
+Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática', function (string) {
+    careerData.name = string;
+    careerData.weights = { nem: 10, ranking: 20, language: 20, math: 50 }; // science is missing, weights sum to 100
+});
+
+Then('el sistema calcula un puntaje ponderado de {string}', function (string) {
+    expect(simulationResult.weightedScore).toBe(parseFloat(string));
+});
+
+Then('el sistema indica que el estudiante alcanza el puntaje de corte', function () {
+    expect(simulationResult.status).toBe('success');
+});
+
+Then('la diferencia mostrada es {string}', function (string) {
+    const diff = simulationResult.weightedScore - simulationResult.career.cutoffScore;
+    expect(diff.toFixed(1)).toBe(parseFloat(string).toFixed(1));
+});
+
+Then('el sistema no interpreta el empate como un resultado desfavorable', function () {
+    expect(simulationResult.status).not.toBe('not_enough');
+    expect(simulationResult.status).toBe('success');
+});
+
+// Escenario 3 pasando en verde
