@@ -23,3 +23,13 @@ Característica: Simular Postulación PAES
     Y el sistema muestra el mensaje "¡Alcanzas el puntaje de corte!"
     Y el sistema muestra el puntaje ponderado "1000.0", el puntaje de corte "882.3" y la diferencia "+117.7"
     Y el sistema despliega el desglose ponderado factor por factor
+
+  Escenario: Puntaje ponderado exactamente igual al puntaje de corte
+    Dado que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente "705.4"
+    Y la carrera "Ingeniería Civil Informática - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática
+    Y la carrera "Ingeniería Civil Informática - UFRO" tiene un puntaje de corte de "705.4"
+    Cuando el estudiante selecciona la carrera "Ingeniería Civil Informática - UFRO" desde el listado desplegable del simulador
+    Entonces el sistema calcula un puntaje ponderado de "705.4"
+    Y el sistema indica que el estudiante alcanza el puntaje de corte
+    Y la diferencia mostrada es "0.0"
+    Y el sistema no interpreta el empate como un resultado desfavorable
