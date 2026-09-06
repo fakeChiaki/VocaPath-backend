@@ -75,3 +75,33 @@ Then('el sistema despliega el desglose ponderado factor por factor', function ()
     // Validación de la estructura de respuesta completa
     expect(simulationResult).toHaveProperty('career');
 });
+
+Given('que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema calcula un puntaje ponderado de {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema indica que el estudiante alcanza el puntaje de corte', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la diferencia mostrada es {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema no interpreta el empate como un resultado desfavorable', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
