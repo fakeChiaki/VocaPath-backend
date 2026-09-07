@@ -2,6 +2,18 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'vitest';
 import { SimulatorService } from '../../src/simulator/simulator.service.js';
 
+const FACTOR_LABELS: Record<string, string> = {
+    nem: 'NEM',
+    ranking: 'Ranking',
+    language: 'Comp. Lectora',
+    math: 'Comp. Matemática',
+    science: 'Ciencias',
+};
+
+const LABEL_TO_FACTOR: Record<string, string> = Object.fromEntries(
+    Object.entries(FACTOR_LABELS).map(([factor, label]) => [label, factor]),
+);
+
 // Variables de estado compartidas entre los pasos del escenario
 let userScores: any[] = [];
 let careerData: any = { id: 'carrera-1', weights: {} };
@@ -17,18 +29,11 @@ Given('que el estudiante se encuentra en la sección {string} de VocaPath', func
 });
 
 Given('que el estudiante tiene registrados los siguientes puntajes por materia:', function (dataTable) {
-    // Transformación de la tabla Gherkin al formato de dominio de la aplicación
     const rows = dataTable.hashes();
-    userScores = rows.map((row: any) => {
-        let factor = row.Materia;
-        if (factor === 'Comp. Lectora') factor = 'language';
-        if (factor === 'Comp. Matemática') factor = 'math';
-        if (factor === 'Ciencias') factor = 'science';
-        if (factor === 'NEM') factor = 'nem';
-        if (factor === 'Ranking') factor = 'ranking';
-
-        return { factor, value: parseFloat(row.Puntaje) };
-    });
+    userScores = rows.map((row: any) => ({
+        factor: LABEL_TO_FACTOR[row.Materia],
+        value: parseFloat(row.Puntaje),
+    }));
 });
 
 Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias', function (string) {
@@ -57,9 +62,14 @@ Then('el sistema calcula el puntaje ponderado utilizando las ponderaciones de la
     expect(simulationResult.weightedScore).toBeDefined();
 });
 
-Then('el sistema muestra el mensaje {string}', function (string) {
-    // Validación del estado de éxito de la simulación
-    expect(simulationResult.status).toBe('success');
+Then('el sistema muestra el mensaje {string}', function (string: string) {
+    // Validación de la correspondencia entre el mensaje y el estado de la simulación
+    const expectedStatusByMessage: Record<string, string> = {
+        '¡Alcanzas el puntaje de corte!': 'success',
+        'Te faltan puntajes para simular': 'missing_scores',
+    };
+
+    expect(simulationResult.status).toBe(expectedStatusByMessage[string]);
 });
 
 Then('el sistema muestra el puntaje ponderado {string}, el puntaje de corte {string} y la diferencia {string}', function (string, string2, string3) {
@@ -76,6 +86,32 @@ Then('el sistema despliega el desglose ponderado factor por factor', function ()
     expect(simulationResult).toHaveProperty('career');
 });
 
+Given('que el estudiante no tiene registrado ningún puntaje por materia', function () {
+    userScores = [];
+});
+
+Then('el sistema bloquea la simulación', function () {
+    // Verificación de que la simulación se bloquea cuando no hay puntajes registrados
+    expect(simulationResult.status).toBe('missing_scores');
+});
+
+Then('el sistema indica como materias faltantes {string}', function (string: string) {
+    const expectedLabels = string.split(', ');
+    const actualLabels = simulationResult.missingFactors.map((factor: string) => FACTOR_LABELS[factor]);
+
+    expect(actualLabels).toEqual(expectedLabels);
+});
+
+Then('el sistema muestra el botón {string}', function (string: string) {
+    // El botón es una decisión de UI del frontend; a nivel de dominio
+    // se verifica la condición que dispara su aparición: hay materias faltantes.
+    expect(simulationResult.missingFactors.length).toBeGreaterThan(0);
+});
+
+Then('el sistema no calcula ni muestra ningún puntaje ponderado', function () {
+    // Validación de que no se realiza el cálculo de puntaje ponderado cuando faltan puntajes
+    expect(simulationResult.weightedScore).toBeNull();
+});
 Given('que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente {string}', function (string) {
     const targetScore = parseFloat(string);
     userScores = [

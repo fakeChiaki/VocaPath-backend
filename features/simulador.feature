@@ -24,6 +24,16 @@ Característica: Simular Postulación PAES
     Y el sistema muestra el puntaje ponderado "1000.0", el puntaje de corte "882.3" y la diferencia "+117.7"
     Y el sistema despliega el desglose ponderado factor por factor
 
+  Escenario: Bloquear la simulación cuando faltan puntajes registrados
+    Dado que el estudiante no tiene registrado ningún puntaje por materia
+    Y la carrera "Medicina - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias
+    Cuando el estudiante selecciona la carrera "Medicina - UFRO" desde el listado desplegable del simulador
+    Entonces el sistema bloquea la simulación
+    Y el sistema muestra el mensaje "Te faltan puntajes para simular"
+    Y el sistema indica como materias faltantes "NEM, Ranking, Comp. Lectora, Comp. Matemática, Ciencias"
+    Y el sistema muestra el botón "Ir a Mis Puntajes"
+    Y el sistema no calcula ni muestra ningún puntaje ponderado
+    
   Escenario: Puntaje ponderado exactamente igual al puntaje de corte
     Dado que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente "705.4"
     Y la carrera "Ingeniería Civil Informática - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática
