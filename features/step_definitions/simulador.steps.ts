@@ -57,9 +57,14 @@ Then('el sistema calcula el puntaje ponderado utilizando las ponderaciones de la
     expect(simulationResult.weightedScore).toBeDefined();
 });
 
-Then('el sistema muestra el mensaje {string}', function (string) {
-    // Validación del estado de éxito de la simulación
-    expect(simulationResult.status).toBe('success');
+Then('el sistema muestra el mensaje {string}', function (string: string) {
+    // Validación de la correspondencia entre el mensaje y el estado de la simulación
+    const expectedStatusByMessage: Record<string, string> = {
+        '¡Alcanzas el puntaje de corte!': 'success',
+        'Te faltan puntajes para simular': 'missing_scores',
+    };
+
+    expect(simulationResult.status).toBe(expectedStatusByMessage[string]);
 });
 
 Then('el sistema muestra el puntaje ponderado {string}, el puntaje de corte {string} y la diferencia {string}', function (string, string2, string3) {
@@ -77,26 +82,37 @@ Then('el sistema despliega el desglose ponderado factor por factor', function ()
 });
 
 Given('que el estudiante no tiene registrado ningún puntaje por materia', function () {
-
-  return 'pending';
+    userScores = [];
 });
 
 Then('el sistema bloquea la simulación', function () {
-
-  return 'pending';
+    // Verificación de que la simulación se bloquea cuando no hay puntajes registrados
+    expect(simulationResult.status).toBe('missing_scores');
 });
 
 Then('el sistema indica como materias faltantes {string}', function (string) {
+    // Verificación de las materias faltantes en la simulación
+    const factorLabels: Record<string, string> = {
+        nem: 'NEM',
+        ranking: 'Ranking',
+        language: 'Comp. Lectora',
+        math: 'Comp. Matemática',
+        science: 'Ciencias',
+    };
 
-  return 'pending';
+    const expectedLabels = string.split(', ');
+    const actualLabels = simulationResult.missingFactors.map((factor: string) => factorLabels[factor]);
+
+    expect(actualLabels).toEqual(expectedLabels);
 });
 
-Then('el sistema muestra el botón {string}', function (string) {
-
-  return 'pending';
+Then('el sistema muestra el botón {string}', function (string: string) {
+    // El botón es una decisión de UI del frontend; a nivel de dominio
+    // se verifica la condición que dispara su aparición: hay materias faltantes.
+    expect(simulationResult.missingFactors.length).toBeGreaterThan(0);
 });
 
 Then('el sistema no calcula ni muestra ningún puntaje ponderado', function () {
-
-  return 'pending';
+    // Validación de que no se realiza el cálculo de puntaje ponderado cuando faltan puntajes
+    expect(simulationResult.weightedScore).toBeNull();
 });
