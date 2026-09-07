@@ -110,4 +110,7 @@ Then('el sistema no interpreta el empate como un resultado desfavorable', functi
     expect(simulationResult.status).toBe('success');
 });
 
-// Escenario 3 pasando en verde
+Given('la carrera {string} exige puntajes solo en NEM, Ranking, Comp. Lectora y Comp. Matemática', function (string) {
+    careerData.name = string;
+    careerData.weights = { nem: 10, ranking: 20, language: 20, math: 50 };
+});
