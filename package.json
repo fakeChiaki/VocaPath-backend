@@ -21,7 +21,6 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
@@ -48,6 +47,7 @@
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.2.1",
+    "@cucumber/pretty-formatter": "^4.0.2",
     "@nestjs/cli": "^12.0.0",
     "@nestjs/mau": "^0.2.6",
     "@nestjs/schematics": "^12.0.0",

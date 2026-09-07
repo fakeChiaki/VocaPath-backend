@@ -63,6 +63,9 @@ importers:
       '@cucumber/cucumber':
         specifier: ^13.2.1
         version: 13.2.1
+      '@cucumber/pretty-formatter':
+        specifier: ^4.0.2
+        version: 4.0.2(@cucumber/messages@34.2.0)
       '@nestjs/cli':
         specifier: ^12.0.0
         version: 12.0.0(@types/node@24.13.3)(prettier@3.9.6)
@@ -241,6 +244,11 @@ packages:
 
   '@cucumber/pretty-formatter@4.0.0':
     resolution: {integrity: sha512-vWKHUfjMphtbeHHlQBZ1gQzPL3/HE/O2dNnpBqEOIDwvhp7tKvqSe8kscp2H7pArbxN6euEpR5JbstJdzo3iyg==}
+    peerDependencies:
+      '@cucumber/messages': '*'
+
+  '@cucumber/pretty-formatter@4.0.2':
+    resolution: {integrity: sha512-c33wUL5h8zDvTIng9GCJcaHjhx51EGTOlze3K1CxSaNE36hHQZxSPSlIQ3jQYChEmcV1T3U2LYQAKc8rT7pZmw==}
     peerDependencies:
       '@cucumber/messages': '*'
 
@@ -3103,6 +3111,12 @@ snapshots:
     dependencies:
       '@cucumber/messages': 34.2.0
       '@cucumber/query': 16.0.0(@cucumber/messages@34.2.0)
+      luxon: 3.7.2
+
+  '@cucumber/pretty-formatter@4.0.2(@cucumber/messages@34.2.0)':
+    dependencies:
+      '@cucumber/messages': 34.2.0
+      '@cucumber/query': 16.1.1(@cucumber/messages@34.2.0)
       luxon: 3.7.2
 
   '@cucumber/query@16.0.0(@cucumber/messages@34.2.0)':
