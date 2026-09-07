@@ -31,6 +31,10 @@ Given('que el estudiante tiene registrados los siguientes puntajes por materia:'
     });
 });
 
+Given('que el estudiante tiene registrados los siguientes puntajes bajos por materia:', function (dataTable) {
+    throw new Error('Paso pendiente: registrar puntajes bajos del estudiante');
+});
+
 Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias', function (string) {
     // Configuración de las ponderaciones requeridas para el cálculo
     careerData.name = string;
