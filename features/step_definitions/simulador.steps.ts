@@ -75,3 +75,28 @@ Then('el sistema despliega el desglose ponderado factor por factor', function ()
     // Validación de la estructura de respuesta completa
     expect(simulationResult).toHaveProperty('career');
 });
+
+Given('que el estudiante no tiene registrado ningún puntaje por materia', function () {
+
+  return 'pending';
+});
+
+Then('el sistema bloquea la simulación', function () {
+
+  return 'pending';
+});
+
+Then('el sistema indica como materias faltantes {string}', function (string) {
+
+  return 'pending';
+});
+
+Then('el sistema muestra el botón {string}', function (string) {
+
+  return 'pending';
+});
+
+Then('el sistema no calcula ni muestra ningún puntaje ponderado', function () {
+
+  return 'pending';
+});
