@@ -9,6 +9,10 @@ let simulationResult: any;
 let simulatorService: SimulatorService;
 
 Given('que el estudiante se encuentra en la sección {string} de VocaPath', function (string) {
+    userScores = [];
+    careerData = { id: 'carrera-1', weights: {} };
+    simulationResult = undefined;
+
     // Inicialización del servicio inyectando repositorios simulados (mocks)
     const mockCareersService = { findById: async (id: string) => careerData } as any;
     const mockScoresService = { findAll: async (userId: string) => userScores } as any;
@@ -21,9 +25,9 @@ Given('que el estudiante tiene registrados los siguientes puntajes por materia:'
     const rows = dataTable.hashes();
     userScores = rows.map((row: any) => {
         let factor = row.Materia;
-        if (factor === 'Comp. Lectora') factor = 'language';
-        if (factor === 'Comp. Matemática') factor = 'math';
-        if (factor === 'Ciencias') factor = 'science';
+        if (factor === 'Comp. Lectora') factor = 'lectora';
+        if (factor === 'Comp. Matemática') factor = 'matematica';
+        if (factor === 'Ciencias') factor = 'ciencias';
         if (factor === 'NEM') factor = 'nem';
         if (factor === 'Ranking') factor = 'ranking';
 
@@ -32,13 +36,26 @@ Given('que el estudiante tiene registrados los siguientes puntajes por materia:'
 });
 
 Given('que el estudiante tiene registrados los siguientes puntajes bajos por materia:', function (dataTable) {
-    throw new Error('Paso pendiente: registrar puntajes bajos del estudiante');
+    const rows = dataTable.hashes();
+    userScores = rows.map((row: any) => {
+        let factor = row.Materia;
+        if (factor === 'Comp. Lectora') factor = 'lectora';
+        if (factor === 'Comp. Matemática') factor = 'matematica';
+        if (factor === 'Ciencias') factor = 'ciencias';
+        if (factor === 'NEM') factor = 'nem';
+        if (factor === 'Ranking') factor = 'ranking';
+
+        return { factor, value: parseFloat(row.Puntaje) };
+    });
+
+    careerData.name = 'Medicina - UFRO';
+    careerData.weights = { nem: 10, ranking: 20, lectora: 10, matematica: 20, ciencias: 40 };
 });
 
 Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias', function (string) {
     // Configuración de las ponderaciones requeridas para el cálculo
     careerData.name = string;
-    careerData.weights = { nem: 10, ranking: 20, language: 15, math: 45, science: 10 };
+    careerData.weights = { nem: 10, ranking: 20, lectora: 15, matematica: 45, ciencias: 10 };
 });
 
 Given('la carrera {string} tiene un puntaje de corte de {string}', function (string, string2) {
@@ -62,8 +79,8 @@ Then('el sistema calcula el puntaje ponderado utilizando las ponderaciones de la
 });
 
 Then('el sistema muestra el mensaje {string}', function (string) {
-    // Validación del estado de éxito de la simulación
-    expect(simulationResult.status).toBe('success');
+    const expectedStatus = string === 'Lamentablemente no alcanzas el puntaje de corte histórico' ? 'not_enough' : 'success';
+    expect(simulationResult.status).toBe(expectedStatus);
 });
 
 Then('el sistema muestra el puntaje ponderado {string}, el puntaje de corte {string} y la diferencia {string}', function (string, string2, string3) {
@@ -85,15 +102,15 @@ Given('que el estudiante tiene registrados puntajes por materia tales que su pun
     userScores = [
         { factor: 'nem', value: targetScore },
         { factor: 'ranking', value: targetScore },
-        { factor: 'language', value: targetScore },
-        { factor: 'math', value: targetScore },
-        { factor: 'science', value: targetScore }
+        { factor: 'lectora', value: targetScore },
+        { factor: 'matematica', value: targetScore },
+        { factor: 'ciencias', value: targetScore }
     ];
 });
 
 Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática', function (string) {
     careerData.name = string;
-    careerData.weights = { nem: 10, ranking: 20, language: 20, math: 50 }; // science is missing, weights sum to 100
+    careerData.weights = { nem: 10, ranking: 20, lectora: 20, matematica: 50 }; // science is missing, weights sum to 100
 });
 
 Then('el sistema calcula un puntaje ponderado de {string}', function (string) {
