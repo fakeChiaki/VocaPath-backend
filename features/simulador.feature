@@ -33,3 +33,16 @@ Característica: Simular Postulación PAES
     Y el sistema indica que el estudiante alcanza el puntaje de corte
     Y la diferencia mostrada es "0.0"
     Y el sistema no interpreta el empate como un resultado desfavorable
+
+  Escenario: Simular postulación donde el puntaje no alcanza el corte
+    Dado que el estudiante tiene registrados los siguientes puntajes bajos por materia:
+      | Materia          | Puntaje |
+      | NEM              | 500     |
+      | Ranking          | 500     |
+      | Comp. Lectora    | 500     |
+      | Comp. Matemática | 500     |
+      | Ciencias         | 500     |
+    Y la carrera "Medicina - UFRO" tiene un puntaje de corte de "882.3"
+    Cuando el estudiante selecciona la carrera "Medicina - UFRO" desde el listado desplegable del simulador
+    Entonces el sistema calcula un puntaje ponderado de "500.0"
+    Y el sistema muestra el mensaje "Lamentablemente no alcanzas el puntaje de corte histórico"
