@@ -2,6 +2,18 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'vitest';
 import { SimulatorService } from '../../src/simulator/simulator.service.js';
 
+const FACTOR_LABELS: Record<string, string> = {
+    nem: 'NEM',
+    ranking: 'Ranking',
+    language: 'Comp. Lectora',
+    math: 'Comp. Matemática',
+    science: 'Ciencias',
+};
+
+const LABEL_TO_FACTOR: Record<string, string> = Object.fromEntries(
+    Object.entries(FACTOR_LABELS).map(([factor, label]) => [label, factor]),
+);
+
 // Variables de estado compartidas entre los pasos del escenario
 let userScores: any[] = [];
 let careerData: any = { id: 'carrera-1', weights: {} };
@@ -17,18 +29,11 @@ Given('que el estudiante se encuentra en la sección {string} de VocaPath', func
 });
 
 Given('que el estudiante tiene registrados los siguientes puntajes por materia:', function (dataTable) {
-    // Transformación de la tabla Gherkin al formato de dominio de la aplicación
     const rows = dataTable.hashes();
-    userScores = rows.map((row: any) => {
-        let factor = row.Materia;
-        if (factor === 'Comp. Lectora') factor = 'language';
-        if (factor === 'Comp. Matemática') factor = 'math';
-        if (factor === 'Ciencias') factor = 'science';
-        if (factor === 'NEM') factor = 'nem';
-        if (factor === 'Ranking') factor = 'ranking';
-
-        return { factor, value: parseFloat(row.Puntaje) };
-    });
+    userScores = rows.map((row: any) => ({
+        factor: LABEL_TO_FACTOR[row.Materia],
+        value: parseFloat(row.Puntaje),
+    }));
 });
 
 Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias', function (string) {
@@ -90,18 +95,9 @@ Then('el sistema bloquea la simulación', function () {
     expect(simulationResult.status).toBe('missing_scores');
 });
 
-Then('el sistema indica como materias faltantes {string}', function (string) {
-    // Verificación de las materias faltantes en la simulación
-    const factorLabels: Record<string, string> = {
-        nem: 'NEM',
-        ranking: 'Ranking',
-        language: 'Comp. Lectora',
-        math: 'Comp. Matemática',
-        science: 'Ciencias',
-    };
-
+Then('el sistema indica como materias faltantes {string}', function (string: string) {
     const expectedLabels = string.split(', ');
-    const actualLabels = simulationResult.missingFactors.map((factor: string) => factorLabels[factor]);
+    const actualLabels = simulationResult.missingFactors.map((factor: string) => FACTOR_LABELS[factor]);
 
     expect(actualLabels).toEqual(expectedLabels);
 });
