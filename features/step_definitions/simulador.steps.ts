@@ -32,7 +32,7 @@ Given('que el estudiante tiene registrados los siguientes puntajes por materia:'
     const rows = dataTable.hashes();
     userScores = rows.map((row: any) => ({
         factor: LABEL_TO_FACTOR[row.Materia],
-        value: parseFloat(row.Puntaje),
+        value: Number.parseFloat(row.Puntaje),
     }));
 });
 
@@ -41,7 +41,7 @@ Given('que el estudiante tiene registrados los siguientes puntajes bajos por mat
     const rows = dataTable.hashes();
     userScores = rows.map((row: any) => ({
         factor: LABEL_TO_FACTOR[row.Materia],
-        value: parseFloat(row.Puntaje),
+        value: Number.parseFloat(row.Puntaje),
     }));
 
     careerData.name = 'Medicina - UFRO';
@@ -56,7 +56,7 @@ Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora, Comp. 
 });
 
 Given('la carrera {string} tiene un puntaje de corte de {string}', function (string, string2) {
-    careerData.cutoffScore = parseFloat(string2);
+    careerData.cutoffScore = Number.parseFloat(string2);
 });
 
 When('el estudiante selecciona la carrera {string} desde el listado desplegable del simulador', async function (string) {
@@ -88,11 +88,11 @@ Then('el sistema muestra el mensaje {string}', function (string: string) {
 
 Then('el sistema muestra el puntaje ponderado {string}, el puntaje de corte {string} y la diferencia {string}', function (string, string2, string3) {
     // Aserción de los cálculos matemáticos contra los valores esperados
-    expect(simulationResult.weightedScore).toBe(parseFloat(string));
-    expect(simulationResult.career.cutoffScore).toBe(parseFloat(string2));
+    expect(simulationResult.weightedScore).toBe(Number.parseFloat(string));
+    expect(simulationResult.career.cutoffScore).toBe(Number.parseFloat(string2));
 
     const diff = simulationResult.weightedScore - simulationResult.career.cutoffScore;
-    expect(diff.toFixed(1)).toBe(parseFloat(string3).toFixed(1));
+    expect(diff.toFixed(1)).toBe(Number.parseFloat(string3).toFixed(1));
 });
 
 Then('el sistema despliega el desglose ponderado factor por factor', function () {
@@ -128,7 +128,7 @@ Then('el sistema no calcula ni muestra ningún puntaje ponderado', function () {
 });
 
 Given('que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente {string}', function (string) {
-    const targetScore = parseFloat(string);
+    const targetScore = Number.parseFloat(string);
     userScores = [
         { factor: 'nem', value: targetScore },
         { factor: 'ranking', value: targetScore },
@@ -144,7 +144,7 @@ Given('la carrera {string} exige puntajes en NEM, Ranking, Comp. Lectora y Comp.
 });
 
 Then('el sistema calcula un puntaje ponderado de {string}', function (string) {
-    expect(simulationResult.weightedScore).toBe(parseFloat(string));
+    expect(simulationResult.weightedScore).toBe(Number.parseFloat(string));
 });
 
 Then('el sistema indica que el estudiante alcanza el puntaje de corte', function () {
@@ -153,7 +153,7 @@ Then('el sistema indica que el estudiante alcanza el puntaje de corte', function
 
 Then('la diferencia mostrada es {string}', function (string) {
     const diff = simulationResult.weightedScore - simulationResult.career.cutoffScore;
-    expect(diff.toFixed(1)).toBe(parseFloat(string).toFixed(1));
+    expect(diff.toFixed(1)).toBe(Number.parseFloat(string).toFixed(1));
 });
 
 Then('el sistema no interpreta el empate como un resultado desfavorable', function () {
