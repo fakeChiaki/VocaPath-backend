@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { DemreOfferScraper } from './demre/demre-offer.scraper.js';
+import { ScraperRunner } from './scraper-runner.service.js';
 import { UctCareerScraper } from './uct/uct-career.scraper.js';
 import { UautonomaCareerScraper } from './uautonoma/uautonoma-career.scraper.js';
 import { UfroCareerScraper } from './ufro/ufro-career.scraper.js';
@@ -7,7 +9,8 @@ import { UmayorCareerScraper } from './umayor/umayor-career.scraper.js';
 import { UstCareerScraper } from './ust/ust-career.scraper.js';
 
 @Module({
-  providers: [DemreOfferScraper, UfroCareerScraper, UctCareerScraper, UautonomaCareerScraper, UmayorCareerScraper, UstCareerScraper],
-  exports: [DemreOfferScraper, UfroCareerScraper, UctCareerScraper, UautonomaCareerScraper, UmayorCareerScraper, UstCareerScraper],
+  imports: [ScheduleModule.forRoot()],
+  providers: [DemreOfferScraper, UfroCareerScraper, UctCareerScraper, UautonomaCareerScraper, UmayorCareerScraper, UstCareerScraper, ScraperRunner],
+  exports: [ScraperRunner],
 })
 export class ScraperModule {}

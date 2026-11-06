@@ -84,4 +84,4 @@ src/
 
 El modelo se define con Drizzle en `src/database/schema/` y las migraciones generadas viven en `src/database/migrations/`. Todas las tablas de contenido (universidades, carreras, fechas, banco de preguntas) tienen una restricción `unique` que hace que `pnpm run db:seed` sea seguro de ejecutar más de una vez sin duplicar datos.
 
-El seed carga áreas, banco de preguntas y fechas de ejemplo. Universidades y carreras no se siembran: las crea y actualiza `pnpm run scrape` a partir de la oferta del DEMRE y de los sitios de UFRO, UCT, U. Autónoma, U. Mayor y Santo Tomás (solo sedes de Temuco).
+El seed carga áreas, banco de preguntas y fechas de ejemplo. Universidades y carreras no se siembran: las crea y actualiza `pnpm run scrape` a partir de la oferta del DEMRE y de los sitios de UFRO, UCT, U. Autónoma, U. Mayor y Santo Tomás (solo sedes de Temuco). Con el servidor levantado, los scrapers también corren solos cada lunes a las 03:00 (hora de Santiago); cada ejecución queda registrada en `scrape_runs`.
