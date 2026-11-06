@@ -27,6 +27,7 @@ export class CareersService {
         firstSelectedScore: careers.firstSelectedScore,
         cutoffScore: careers.cutoffScore,
         profile: careers.profile,
+        curriculumUrl: careers.curriculumUrl,
         weights: careers.weights,
         areaCode: careers.areaCode,
         areaLabel: areas.label,

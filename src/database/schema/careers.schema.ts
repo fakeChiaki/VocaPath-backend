@@ -31,6 +31,7 @@ export const careers = pgTable(
     firstSelectedScore: numeric('first_selected_score', { precision: 6, scale: 2, mode: 'number' }),
     cutoffScore: numeric('cutoff_score', { precision: 6, scale: 2, mode: 'number' }),
     profile: text('profile'),
+    curriculumUrl: text('curriculum_url'),
     weights: jsonb('weights').$type<CareerWeights>().notNull(),
     sourceUrl: text('source_url').notNull(),
     lastScrapedAt: timestamp('last_scraped_at', { withTimezone: true }),

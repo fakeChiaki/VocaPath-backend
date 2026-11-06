@@ -5,6 +5,7 @@ import { DRIZZLE_CLIENT } from '../../database/database.constants.js';
 import type { DrizzleDb } from '../../database/database.types.js';
 import { careers, scrapeRuns, universities } from '../../database/schema/index.js';
 import { parseDemreOffer, type DemreOfferRow, type UniversityKey } from './demre-offer.parser.js';
+import { titleCase } from '../text.js';
 import { readPdfPages } from './pdf-pages.js';
 
 export const DEMRE_OFFER_PDF_URL = 'https://demre.cl/publicaciones/pdf/2027-26-09-24-oferta-definitiva-carreras-p2027.pdf';
@@ -18,16 +19,6 @@ const UNIVERSITIES: Record<UniversityKey, { name: string; fullName: string; colo
 };
 
 const CITY = 'Temuco · Araucanía';
-const LOWERCASE_WORDS = new Set(['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'e', 'o', 'a', 'con', 'para', 'por']);
-
-function titleCase(text: string) {
-  return text
-    .toLowerCase()
-    .split(' ')
-    .map((word, i) => (i > 0 && LOWERCASE_WORDS.has(word) ? word : word.replace(/\p{L}/u, (c) => c.toUpperCase())))
-    .join(' ');
-}
-
 // shortcut: parser HTTP laxo porque demre.cl envía un encabezado inválido que rechaza fetch; solo para esta descarga pública
 function download(url: string, redirects = 3): Promise<Uint8Array> {
   return new Promise((resolve, reject) => {
