@@ -5,6 +5,7 @@ import { DRIZZLE_CLIENT } from '../../database/database.constants.js';
 import type { DrizzleDb } from '../../database/database.types.js';
 import { careers, scrapeRuns, universities } from '../../database/schema/index.js';
 import { parseDemreOffer, type DemreOfferRow, type UniversityKey } from './demre-offer.parser.js';
+import { areaFor } from '../area.js';
 import { titleCase } from '../text.js';
 import { readPdfPages } from './pdf-pages.js';
 
@@ -95,11 +96,15 @@ export class DemreOfferScraper {
           this.logger.warn(`Se omite ${row.university} ${row.code} ${row.name}: sin universidad o sin vacantes`);
           return [];
         }
+        const name = titleCase(row.name);
+        const areaCode = areaFor(name);
+        if (!areaCode) this.logger.warn(`Sin área para "${name}" (${row.university} ${row.code})`);
         return [
           {
             universityId,
             externalCode: row.code,
-            name: titleCase(row.name),
+            name,
+            areaCode,
             vacantes: row.vacantes,
             weights: { ...row.weights, ...(row.historiaOCiencias && { historiaOCiencias: true }) },
             sourceUrl: DEMRE_OFFER_PDF_URL,
@@ -115,6 +120,7 @@ export class DemreOfferScraper {
           target: [careers.universityId, careers.externalCode],
           set: {
             name: sql`excluded.name`,
+            areaCode: sql`coalesce(excluded.area_code, ${careers.areaCode})`,
             vacantes: sql`excluded.vacantes`,
             weights: sql`excluded.weights`,
             sourceUrl: sql`excluded.source_url`,
