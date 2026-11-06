@@ -7,6 +7,7 @@ export interface CareerWeights {
   ranking: number;
   lectora: number;
   matematica: number;
+  matematica2: number;
   historia: number;
   ciencias: number;
 }

@@ -62,7 +62,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 882.3,
     profile:
       'Personas con vocación de servicio, pensamiento científico y resistencia al estudio exigente. Te apasiona la biología, la salud de las personas y resolver problemas complejos bajo presión.',
-    weights: { nem: 10, ranking: 20, lectora: 10, matematica: 20, historia: 0, ciencias: 40 },
+    weights: { nem: 10, ranking: 20, lectora: 10, matematica: 20, matematica2: 0, historia: 0, ciencias: 40 },
   },
   {
     university: 'UFRO',
@@ -78,7 +78,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 705.4,
     profile:
       'Disfrutas la lógica, la programación y construir soluciones tecnológicas. Te motivan las matemáticas, el pensamiento abstracto y la innovación digital.',
-    weights: { nem: 10, ranking: 20, lectora: 10, matematica: 40, historia: 0, ciencias: 20 },
+    weights: { nem: 10, ranking: 20, lectora: 10, matematica: 40, matematica2: 0, historia: 0, ciencias: 20 },
   },
   {
     university: 'UFRO',
@@ -94,7 +94,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 740.1,
     profile:
       'Te interesa entender el comportamiento humano, escuchar y acompañar a las personas. Tienes empatía, sentido crítico y curiosidad por la mente.',
-    weights: { nem: 15, ranking: 20, lectora: 25, matematica: 20, historia: 20, ciencias: 0 },
+    weights: { nem: 15, ranking: 20, lectora: 25, matematica: 20, matematica2: 0, historia: 20, ciencias: 0 },
   },
   {
     university: 'UFRO',
@@ -110,7 +110,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 698.6,
     profile:
       'Te gusta argumentar, leer, debatir y defender causas. Valoras la justicia, el orden social y la comunicación clara y persuasiva.',
-    weights: { nem: 20, ranking: 20, lectora: 30, matematica: 10, historia: 20, ciencias: 0 },
+    weights: { nem: 20, ranking: 20, lectora: 30, matematica: 10, matematica2: 0, historia: 20, ciencias: 0 },
   },
   {
     university: 'UFRO',
@@ -126,7 +126,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 760.8,
     profile:
       'Tienes vocación de cuidado, trabajo en equipo y resistencia. Te interesa la salud, el contacto humano y el trabajo clínico.',
-    weights: { nem: 15, ranking: 20, lectora: 15, matematica: 20, historia: 0, ciencias: 30 },
+    weights: { nem: 15, ranking: 20, lectora: 15, matematica: 20, matematica2: 0, historia: 0, ciencias: 30 },
   },
   {
     university: 'UFRO',
@@ -142,7 +142,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 612.5,
     profile:
       'Te gusta enseñar, acompañar el aprendizaje de niños y generar impacto social. Tienes paciencia, creatividad y vocación formadora.',
-    weights: { nem: 20, ranking: 30, lectora: 25, matematica: 25, historia: 0, ciencias: 0 },
+    weights: { nem: 20, ranking: 30, lectora: 25, matematica: 25, matematica2: 0, historia: 0, ciencias: 0 },
   },
   {
     university: 'UdeC',
@@ -158,7 +158,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 752.0,
     profile:
       'Te motivan los negocios, la economía y liderar proyectos. Combinas habilidad numérica con visión estratégica y trabajo en equipo.',
-    weights: { nem: 10, ranking: 20, lectora: 20, matematica: 40, historia: 10, ciencias: 0 },
+    weights: { nem: 10, ranking: 20, lectora: 20, matematica: 40, matematica2: 0, historia: 10, ciencias: 0 },
   },
   {
     university: 'UdeC',
@@ -174,7 +174,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 778.9,
     profile:
       'Te interesa el movimiento humano, la rehabilitación y el deporte. Tienes interés científico y vocación por ayudar a recuperar la salud.',
-    weights: { nem: 15, ranking: 20, lectora: 15, matematica: 20, historia: 0, ciencias: 30 },
+    weights: { nem: 15, ranking: 20, lectora: 15, matematica: 20, matematica2: 0, historia: 0, ciencias: 30 },
   },
   {
     university: 'USACH',
@@ -190,7 +190,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 743.2,
     profile:
       'Combinas creatividad, dibujo y pensamiento espacial con cálculo. Te interesa el diseño, la ciudad y materializar ideas en espacios.',
-    weights: { nem: 15, ranking: 20, lectora: 25, matematica: 40, historia: 0, ciencias: 0 },
+    weights: { nem: 15, ranking: 20, lectora: 25, matematica: 40, matematica2: 0, historia: 0, ciencias: 0 },
   },
   {
     university: 'USACH',
@@ -206,7 +206,7 @@ const careersSeed: CareerSeed[] = [
     cutoffScore: 651.7,
     profile:
       'Te gusta escribir, investigar y contar historias. Tienes curiosidad por la actualidad, pensamiento crítico y buena comunicación.',
-    weights: { nem: 20, ranking: 20, lectora: 35, matematica: 10, historia: 15, ciencias: 0 },
+    weights: { nem: 20, ranking: 20, lectora: 35, matematica: 10, matematica2: 0, historia: 15, ciencias: 0 },
   },
 ];
 
