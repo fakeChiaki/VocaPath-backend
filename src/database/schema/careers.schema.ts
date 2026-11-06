@@ -10,6 +10,7 @@ export interface CareerWeights {
   matematica2: number;
   historia: number;
   ciencias: number;
+  historiaOCiencias?: boolean;
 }
 
 export const careers = pgTable(
