@@ -19,6 +19,7 @@ export type MencionCiencias = (typeof mencionCienciasEnum.enumValues)[number];
 export const scoreFactorEnum = pgEnum('score_factor', [
   'lectora',
   'matematica',
+  'matematica2',
   'historia',
   'ciencias',
   'nem',

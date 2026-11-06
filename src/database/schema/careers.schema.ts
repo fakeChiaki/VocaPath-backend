@@ -7,8 +7,10 @@ export interface CareerWeights {
   ranking: number;
   lectora: number;
   matematica: number;
+  matematica2: number;
   historia: number;
   ciencias: number;
+  historiaOCiencias?: boolean;
 }
 
 export const careers = pgTable(
@@ -18,19 +20,18 @@ export const careers = pgTable(
     universityId: uuid('university_id')
       .notNull()
       .references(() => universities.id, { onDelete: 'cascade' }),
-    areaCode: text('area_code')
-      .notNull()
-      .references(() => areas.code),
+    areaCode: text('area_code').references(() => areas.code),
     externalCode: text('external_code').notNull(),
     name: text('name').notNull(),
-    title: text('title').notNull(),
-    degree: text('degree').notNull(),
-    duration: text('duration').notNull(),
-    regimen: text('regimen').notNull(),
+    title: text('title'),
+    degree: text('degree'),
+    duration: text('duration'),
+    regimen: text('regimen'),
     vacantes: integer('vacantes').notNull(),
     firstSelectedScore: numeric('first_selected_score', { precision: 6, scale: 2, mode: 'number' }),
     cutoffScore: numeric('cutoff_score', { precision: 6, scale: 2, mode: 'number' }),
-    profile: text('profile').notNull(),
+    profile: text('profile'),
+    curriculumUrl: text('curriculum_url'),
     weights: jsonb('weights').$type<CareerWeights>().notNull(),
     sourceUrl: text('source_url').notNull(),
     lastScrapedAt: timestamp('last_scraped_at', { withTimezone: true }),

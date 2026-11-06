@@ -26,7 +26,8 @@ pnpm install                      # instalar dependencias
 cp .env.example .env              # crear el archivo de entorno local
 docker compose up -d              # levantar Postgres en localhost:5432
 pnpm run db:migrate                # aplicar las migraciones
-pnpm run db:seed                   # cargar datos de ejemplo (universidades, carreras, preguntas, fechas)
+pnpm run db:seed                   # cargar áreas y bancos de preguntas (PAES y vocacional)
+pnpm run scrape                    # scraping de universidades y carreras (DEMRE + sitios de Temuco)
 pnpm run start:dev                 # servidor de desarrollo con watch (http://localhost:3000)
 ```
 
@@ -57,7 +58,8 @@ pnpm run test:e2e       # tests end-to-end (Vitest)
 
 pnpm run db:generate    # generar una migración a partir de cambios en src/database/schema
 pnpm run db:migrate     # aplicar las migraciones pendientes contra DATABASE_URL
-pnpm run db:seed        # cargar datos de ejemplo (idempotente, se puede correr varias veces)
+pnpm run db:seed        # cargar áreas y bancos de preguntas (idempotente, se puede correr varias veces)
+pnpm run scrape         # compilar y ejecutar los scrapers de universidades y carreras (idempotente)
 pnpm run db:studio      # abrir Drizzle Studio para explorar la base de datos
 ```
 
@@ -72,6 +74,7 @@ src/
 ├── careers/            # listado, búsqueda, detalle y comparador de carreras
 ├── favorites/          # carreras favoritas por usuario
 ├── paes-dates/         # fechas del proceso PAES
+├── scraper/            # scrapers (oferta y calendario DEMRE, sitios de UFRO, UCT, U. Autónoma, U. Mayor y UST) y job semanal
 ├── paes-tests/         # banco de preguntas y rendición de la prueba tipo PAES
 ├── scores/             # "Mis Puntajes" (ingreso manual, eliminación)
 ├── vocational-tests/   # test vocacional y recomendación de carreras
@@ -80,6 +83,6 @@ src/
 
 ## Base de datos
 
-El modelo se define con Drizzle en `src/database/schema/` y las migraciones generadas viven en `src/database/migrations/`. Todas las tablas de contenido (universidades, carreras, fechas, banco de preguntas) tienen una restricción `unique` que hace que `pnpm run db:seed` sea seguro de ejecutar más de una vez sin duplicar datos.
+El modelo se define con Drizzle en `src/database/schema/` y las migraciones generadas viven en `src/database/migrations/`. Todas las tablas de contenido (universidades, carreras, fechas, banco de preguntas) tienen una restricción `unique`, así que tanto `pnpm run db:seed` como `pnpm run scrape` se pueden ejecutar varias veces sin duplicar datos.
 
-El seed actual carga datos de ejemplo curados a mano (no scrapeados); el scraping real de sitios universitarios y del DEMRE está pendiente para una siguiente etapa.
+El seed carga áreas y los bancos de preguntas. Universidades, carreras y fechas PAES no se siembran: las crea y actualiza `pnpm run scrape` a partir de la oferta del DEMRE y de los sitios de UFRO, UCT, U. Autónoma, U. Mayor y Santo Tomás (solo sedes de Temuco), y las fechas desde el calendario del DEMRE. Con el servidor levantado, los scrapers también corren solos cada lunes a las 03:00 (hora de Santiago); cada ejecución queda registrada en `scrape_runs`.

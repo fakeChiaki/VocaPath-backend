@@ -1,0 +1,1 @@
+ALTER TYPE "public"."score_factor" ADD VALUE 'matematica2' BEFORE 'historia';

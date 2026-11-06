@@ -36,6 +36,27 @@
       "when": 1788573404834,
       "tag": "0004_harsh_nicolaos",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793939715829,
+      "tag": "0005_red_turbo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793941698747,
+      "tag": "0006_omniscient_sabra",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793942324196,
+      "tag": "0007_wild_doctor_strange",
+      "breakpoints": true
     }
   ]
 }

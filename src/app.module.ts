@@ -15,6 +15,7 @@ import { ScoresModule } from './scores/scores.module.js';
 import { PaesTestsModule } from './paes-tests/paes-tests.module.js';
 import { VocationalTestsModule } from './vocational-tests/vocational-tests.module.js';
 import { SimulatorModule } from './simulator/simulator.module.js';
+import { ScraperModule } from './scraper/scraper.module.js';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SimulatorModule } from './simulator/simulator.module.js';
     PaesTestsModule,
     VocationalTestsModule,
     SimulatorModule,
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
