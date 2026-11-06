@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
+import { summarize } from '../text.js';
 
 const EXCLUDED_SLUG = /vespertin|online|prosecucion|semipresencial/;
 
@@ -13,6 +14,7 @@ export const UautonomaCareerSchema = z.object({
   firstSelectedScore: z.number().nullable(),
   cutoffScore: z.number().nullable(),
   curriculumUrl: z.string().url().nullable(),
+  profile: z.string().nullable(),
 });
 
 export type UautonomaCareer = z.infer<typeof UautonomaCareerSchema>;
@@ -94,6 +96,14 @@ export function parseUautonomaCareerPage(html: string, url: string): UautonomaCa
 
   if (!name) return null;
 
+  const blocks = $('h2, p').toArray();
+  const start = blocks.findIndex((e) => e.tagName === 'h2' && /¿(En qué consiste|Qué es)/i.test($(e).text()));
+  let profile: string | null = null;
+  for (let i = start + 1; start >= 0 && i < blocks.length && blocks[i]!.tagName !== 'h2' && !profile; i++) {
+    const text = clean($(blocks[i]).text());
+    if (text.length > 80) profile = summarize(text);
+  }
+
   return UautonomaCareerSchema.parse({
     url,
     name,
@@ -104,5 +114,6 @@ export function parseUautonomaCareerPage(html: string, url: string): UautonomaCa
     firstSelectedScore: scores?.first ?? null,
     cutoffScore: scores?.last ?? null,
     curriculumUrl: malla ? new URL(malla, url).toString() : null,
+    profile,
   });
 }

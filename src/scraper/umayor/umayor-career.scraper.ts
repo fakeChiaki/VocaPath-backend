@@ -86,7 +86,7 @@ export class UmayorCareerScraper {
         this.logger.warn(`"${page.name}" (${page.url}) no coincide con ninguna carrera de la oferta DEMRE; se omite`);
         continue;
       }
-      const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen, curriculumUrl: page.curriculumUrl };
+      const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen, curriculumUrl: page.curriculumUrl, profile: page.profile };
       const set = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== null));
       await this.db
         .update(careers)

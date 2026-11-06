@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
+import { summarize } from '../text.js';
 
 export const UmayorCareerSchema = z.object({
   url: z.string().url(),
@@ -9,6 +10,7 @@ export const UmayorCareerSchema = z.object({
   duration: z.string().nullable(),
   regimen: z.string().nullable(),
   curriculumUrl: z.string().url().nullable(),
+  profile: z.string().nullable(),
 });
 
 export type UmayorCareer = z.infer<typeof UmayorCareerSchema>;
@@ -55,5 +57,6 @@ export function parseUmayorCareerPage(html: string, url: string): UmayorCareer |
     duration: fields.get('duracion')?.toLowerCase() ?? null,
     regimen: fields.get('regimen') ?? null,
     curriculumUrl: malla ? new URL(malla, url).toString() : null,
+    profile: summarize($('.txt-descripcion p').filter((_, p) => $(p).text().trim().length > 0).first().text()),
   });
 }

@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
+import { summarize } from '../text.js';
 
 export const UstCareerSchema = z.object({
   url: z.string().url(),
@@ -8,6 +9,7 @@ export const UstCareerSchema = z.object({
   duration: z.string().nullable(),
   regimen: z.string().nullable(),
   curriculumUrl: z.string().url().nullable(),
+  profile: z.string().nullable(),
 });
 
 export type UstCareer = z.infer<typeof UstCareerSchema>;
@@ -55,5 +57,6 @@ export function parseUstCareerPage(html: string, url: string): UstCareer | null 
     duration: info.get('duracion')?.toLowerCase() ?? null,
     regimen: info.get('jornada') ?? null,
     curriculumUrl: malla ? new URL(malla, url).toString() : null,
+    profile: summarize($('.carrera__descripcion__body p').filter((_, p) => $(p).text().trim().length > 0).first().text()),
   });
 }

@@ -73,7 +73,7 @@ export class UctCareerScraper {
     const now = new Date();
     let updated = 0;
     for (const page of pages) {
-      const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen };
+      const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen, profile: page.profile };
       const set = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== null));
       const rows = await this.db
         .update(careers)

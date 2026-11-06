@@ -58,7 +58,7 @@ export class UstCareerScraper {
         if (!page) {
           this.logger.warn(`"${career.name}": ${url} no existe o no se imparte en Temuco; se omite`);
         } else {
-          const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen, curriculumUrl: page.curriculumUrl };
+          const fields = { title: page.title, degree: page.degree, duration: page.duration, regimen: page.regimen, curriculumUrl: page.curriculumUrl, profile: page.profile };
           const set = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== null));
           const now = new Date();
           await this.db

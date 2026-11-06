@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
-import { titleCase } from '../text.js';
+import { summarize, titleCase } from '../text.js';
 
 const NON_CAREER_SLUGS = new Set(['calendario', 'carreras', 'admision-especial', 'dudas', 'becas-y-creditos', 'contacto']);
 
@@ -11,6 +11,7 @@ export const UctCareerSchema = z.object({
   degree: z.string().nullable(),
   duration: z.string().nullable(),
   regimen: z.string().nullable(),
+  profile: z.string().nullable(),
 });
 
 export type UctCareer = z.infer<typeof UctCareerSchema>;
@@ -36,6 +37,14 @@ export function parseUctListing(html: string) {
 export function parseUctCareerPage(html: string, url: string): UctCareer[] {
   const $ = cheerio.load(html);
   const careers: UctCareer[] = [];
+  const profile = summarize(
+    $('.elementor-accordion-item')
+      .filter((_, item) => /identidad/i.test($(item).find('.elementor-accordion-title').text()))
+      .first()
+      .find('.elementor-tab-content p')
+      .first()
+      .text(),
+  );
   $('strong').each((_, strong) => {
     if (normalizeLabel($(strong).text()) !== 'CODIGO DEMRE') return;
     const fields = new Map<string, string>();
@@ -57,6 +66,7 @@ export function parseUctCareerPage(html: string, url: string): UctCareer[] {
         degree: text('GRADO ACADEMICO'),
         duration: fields.get('DURACION')?.toLowerCase() ?? null,
         regimen: text('MODALIDAD'),
+        profile,
       }),
     );
   });

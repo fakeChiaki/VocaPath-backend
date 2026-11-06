@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
-import { titleCase } from '../text.js';
+import { summarize, titleCase } from '../text.js';
 
 export const UfroCareerSchema = z.object({
   url: z.string().url(),
@@ -12,6 +12,7 @@ export const UfroCareerSchema = z.object({
   firstSelectedScore: z.number().nullable(),
   cutoffScore: z.number().nullable(),
   curriculumUrl: z.string().url().nullable(),
+  profile: z.string().nullable(),
 });
 
 export type UfroCareer = z.infer<typeof UfroCareerSchema>;
@@ -87,5 +88,6 @@ export function parseUfroCareerPage(html: string, url: string): UfroCareer | nul
     firstSelectedScore: score(lookup(admission, 'PRIMERA')),
     cutoffScore: score(lookup(admission, 'ULTIMA')),
     curriculumUrl: curriculumUrl ?? null,
+    profile: summarize($('meta[name="description"]').attr('content')),
   });
 }

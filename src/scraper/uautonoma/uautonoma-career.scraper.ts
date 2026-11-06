@@ -91,6 +91,7 @@ export class UautonomaCareerScraper {
         firstSelectedScore: page.firstSelectedScore,
         cutoffScore: page.cutoffScore,
         curriculumUrl: page.curriculumUrl,
+        profile: page.profile,
       };
       const set = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== null));
       await this.db
