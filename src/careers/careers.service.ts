@@ -38,7 +38,7 @@ export class CareersService {
       })
       .from(careers)
       .innerJoin(universities, eq(careers.universityId, universities.id))
-      .innerJoin(areas, eq(careers.areaCode, areas.code));
+      .leftJoin(areas, eq(careers.areaCode, areas.code));
   }
 
   findAll(filters: FindCareersFilters) {
