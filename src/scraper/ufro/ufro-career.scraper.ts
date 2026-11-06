@@ -4,19 +4,13 @@ import * as cheerio from 'cheerio';
 import { DRIZZLE_CLIENT } from '../../database/database.constants.js';
 import type { DrizzleDb } from '../../database/database.types.js';
 import { careers, scrapeRuns, universities } from '../../database/schema/index.js';
+import { fetchHtml } from '../http.js';
 import { parseUfroCareerPage, type UfroCareer } from './ufro-career.parser.js';
 
 const LISTING_URL = 'https://admision.ufro.cl/carreras-temuco/';
 const PAGE_DELAY_MS = 300;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function fetchHtml(url: string) {
-  const response = await fetch(url);
-  if (response.status === 404) return null;
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.text();
-}
 
 @Injectable()
 export class UfroCareerScraper {
