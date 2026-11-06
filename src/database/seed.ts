@@ -4,7 +4,6 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm';
 import {
   areas,
-  paesDates,
   paesQuestions,
   vocationalQuestions,
   vocationalOptions,
@@ -260,83 +259,6 @@ const vocationalQuestionsSeed: VocationalQuestionSeed[] = [
   },
 ];
 
-const DEMRE_SOURCE_URL = 'https://demre.cl';
-
-const paesDatesSeed = [
-  {
-    phase: 'Inscripción',
-    title: 'Inicio inscripción PAES',
-    dateStart: '2026-06-02',
-    dateEnd: '2026-06-02',
-    dateLabel: '2 de junio de 2026',
-    status: 'Próximo' as const,
-    icon: '📝',
-  },
-  {
-    phase: 'Inscripción',
-    title: 'Cierre de inscripción',
-    dateStart: '2026-08-04',
-    dateEnd: '2026-08-04',
-    dateLabel: '4 de agosto de 2026',
-    status: 'Próximo' as const,
-    icon: '⏳',
-  },
-  {
-    phase: 'Rendición',
-    title: 'Comp. Lectora y Comp. Matemática 1',
-    dateStart: '2026-11-24',
-    dateEnd: '2026-11-24',
-    dateLabel: '24 de noviembre de 2026',
-    status: 'Programado' as const,
-    icon: '📖',
-  },
-  {
-    phase: 'Rendición',
-    title: 'Historia y Cs. Sociales · Ciencias',
-    dateStart: '2026-11-25',
-    dateEnd: '2026-11-25',
-    dateLabel: '25 de noviembre de 2026',
-    status: 'Programado' as const,
-    icon: '🔬',
-  },
-  {
-    phase: 'Rendición',
-    title: 'Comp. Matemática 2 (electiva)',
-    dateStart: '2026-11-26',
-    dateEnd: '2026-11-26',
-    dateLabel: '26 de noviembre de 2026',
-    status: 'Programado' as const,
-    icon: '📐',
-  },
-  {
-    phase: 'Resultados',
-    title: 'Publicación de puntajes',
-    dateStart: '2027-01-02',
-    dateEnd: '2027-01-02',
-    dateLabel: '2 de enero de 2027',
-    status: 'Programado' as const,
-    icon: '🎯',
-  },
-  {
-    phase: 'Postulación',
-    title: 'Postulación a universidades',
-    dateStart: '2027-01-03',
-    dateEnd: '2027-01-06',
-    dateLabel: '3 al 6 de enero de 2027',
-    status: 'Programado' as const,
-    icon: '🏛️',
-  },
-  {
-    phase: 'Resultados',
-    title: 'Resultados de selección',
-    dateStart: '2027-01-19',
-    dateEnd: '2027-01-19',
-    dateLabel: '19 de enero de 2027',
-    status: 'Programado' as const,
-    icon: '✅',
-  },
-];
-
 async function seed() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -347,11 +269,6 @@ async function seed() {
   const db = drizzle(client);
 
   await db.insert(areas).values(areasSeed).onConflictDoNothing();
-  await db
-    .insert(paesDates)
-    .values(paesDatesSeed.map((d) => ({ ...d, sourceUrl: DEMRE_SOURCE_URL })))
-    .onConflictDoNothing({ target: [paesDates.phase, paesDates.title] });
-
   await db
     .insert(paesQuestions)
     .values(paesQuestionsSeed)

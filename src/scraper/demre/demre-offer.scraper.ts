@@ -1,4 +1,3 @@
-import https from 'node:https';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { DRIZZLE_CLIENT } from '../../database/database.constants.js';
@@ -7,6 +6,7 @@ import { careers, scrapeRuns, universities } from '../../database/schema/index.j
 import { parseDemreOffer, type DemreOfferRow, type UniversityKey } from './demre-offer.parser.js';
 import { areaFor } from '../area.js';
 import { titleCase } from '../text.js';
+import { download } from './download.js';
 import { readPdfPages } from './pdf-pages.js';
 
 export const DEMRE_OFFER_PDF_URL = 'https://demre.cl/publicaciones/pdf/2027-26-09-24-oferta-definitiva-carreras-p2027.pdf';
@@ -20,30 +20,6 @@ const UNIVERSITIES: Record<UniversityKey, { name: string; fullName: string; colo
 };
 
 const CITY = 'Temuco · Araucanía';
-// shortcut: parser HTTP laxo porque demre.cl envía un encabezado inválido que rechaza fetch; solo para esta descarga pública
-function download(url: string, redirects = 3): Promise<Uint8Array> {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, { insecureHTTPParser: true }, (res) => {
-        const { statusCode = 0, headers } = res;
-        if (statusCode >= 300 && statusCode < 400 && headers.location && redirects > 0) {
-          res.resume();
-          resolve(download(new URL(headers.location, url).toString(), redirects - 1));
-          return;
-        }
-        if (statusCode !== 200) {
-          res.resume();
-          reject(new Error(`No se pudo descargar la oferta de DEMRE (HTTP ${statusCode})`));
-          return;
-        }
-        const chunks: Buffer[] = [];
-        res.on('data', (chunk: Buffer) => chunks.push(chunk));
-        res.on('end', () => resolve(new Uint8Array(Buffer.concat(chunks))));
-        res.on('error', reject);
-      })
-      .on('error', reject);
-  });
-}
 
 @Injectable()
 export class DemreOfferScraper {

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { DemreCalendarScraper } from './demre/demre-calendar.scraper.js';
 import { DemreOfferScraper } from './demre/demre-offer.scraper.js';
 import { UautonomaCareerScraper } from './uautonoma/uautonoma-career.scraper.js';
 import { UctCareerScraper } from './uct/uct-career.scraper.js';
@@ -13,6 +14,7 @@ export class ScraperRunner {
   private running = false;
 
   constructor(
+    private readonly demreCalendar: DemreCalendarScraper,
     private readonly demre: DemreOfferScraper,
     private readonly ufro: UfroCareerScraper,
     private readonly uct: UctCareerScraper,
@@ -34,7 +36,7 @@ export class ScraperRunner {
     this.running = true;
     let failures = 0;
     try {
-      for (const scraper of [this.demre, this.ufro, this.uct, this.uautonoma, this.umayor, this.ust]) {
+      for (const scraper of [this.demreCalendar, this.demre, this.ufro, this.uct, this.uautonoma, this.umayor, this.ust]) {
         try {
           await scraper.run();
         } catch (error) {
