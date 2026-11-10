@@ -1,0 +1,35 @@
+# SonarQube local para el análisis de calidad. Uso: docker compose -f docker-compose.sonar.yml up -d
+# Interfaz en http://localhost:9000 (usuario inicial admin / admin; pide cambiar la clave).
+services:
+  sonar-db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonarqube
+    volumes:
+      - sonar_db:/var/lib/postgresql/data
+
+  sonarqube:
+    image: sonarqube:community
+    restart: unless-stopped
+    depends_on:
+      - sonar-db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonarqube
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: 'true'
+    ports:
+      - '9000:9000'
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_logs:/opt/sonarqube/logs
+      - sonar_extensions:/opt/sonarqube/extensions
+
+volumes:
+  sonar_db:
+  sonar_data:
+  sonar_logs:
+  sonar_extensions:
