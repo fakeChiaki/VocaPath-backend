@@ -57,6 +57,13 @@
       "when": 1793942324196,
       "tag": "0007_wild_doctor_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794299130252,
+      "tag": "0008_yummy_peter_parker",
+      "breakpoints": true
     }
   ]
 }

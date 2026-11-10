@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomBytes, createHash } from 'node:crypto';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { DRIZZLE_CLIENT } from '../database/database.constants.js';
 import type { DrizzleDb } from '../database/database.types.js';
 import { refreshTokens } from '../database/schema/index.js';
@@ -12,6 +12,7 @@ import { RegisterDto } from './dto/register.dto.js';
 import type { JwtPayload } from './types/jwt-payload.interface.js';
 
 const SALT_ROUNDS = 10;
+const UNIQUE_VIOLATION = '23505';
 const REFRESH_TOKEN_BYTES = 32;
 
 function hashToken(token: string): string {
@@ -38,11 +39,14 @@ export class AuthService {
     }
 
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
-    const user = await this.usersService.create({
-      name: dto.name,
-      email: dto.email,
-      passwordHash,
-    });
+    let user;
+    try {
+      user = await this.usersService.create({ name: dto.name, email: dto.email, passwordHash });
+    } catch (error) {
+      const code = (error as { code?: string; cause?: { code?: string } }).code ?? (error as { cause?: { code?: string } }).cause?.code;
+      if (code === UNIQUE_VIOLATION) throw new ConflictException('Ya existe una cuenta con ese correo');
+      throw error;
+    }
 
     const { passwordHash: _passwordHash, ...safeUser } = user;
     return safeUser;
@@ -88,11 +92,18 @@ export class AuthService {
       throw new UnauthorizedException('Sesión inválida o expirada');
     }
 
-    await this.db.update(refreshTokens).set({ revokedAt: new Date() }).where(eq(refreshTokens.id, stored.id));
+    const newRefreshToken = await this.db.transaction(async (tx) => {
+      const [claimed] = await tx
+        .update(refreshTokens)
+        .set({ revokedAt: new Date() })
+        .where(and(eq(refreshTokens.id, stored.id), isNull(refreshTokens.revokedAt)))
+        .returning({ id: refreshTokens.id });
+      if (!claimed) throw new UnauthorizedException('Sesión inválida o expirada');
+      return this.createRefreshToken(user.id, tx);
+    });
 
     const payload: JwtPayload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
-    const newRefreshToken = await this.createRefreshToken(user.id);
 
     return { accessToken, refreshToken: newRefreshToken };
   }
@@ -105,12 +116,12 @@ export class AuthService {
       .where(eq(refreshTokens.tokenHash, tokenHash));
   }
 
-  private async createRefreshToken(userId: string) {
+  private async createRefreshToken(userId: string, executor: Pick<DrizzleDb, 'insert'> = this.db) {
     const token = randomBytes(REFRESH_TOKEN_BYTES).toString('hex');
     const expiresInDays = Number(this.configService.get('REFRESH_TOKEN_EXPIRES_IN_DAYS') ?? 7);
     const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
 
-    await this.db.insert(refreshTokens).values({
+    await executor.insert(refreshTokens).values({
       userId,
       tokenHash: hashToken(token),
       expiresAt,

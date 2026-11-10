@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
+import { httpUrl } from '../schemas.js';
 import { summarize } from '../text.js';
 
 export const UstCareerSchema = z.object({
@@ -8,7 +9,7 @@ export const UstCareerSchema = z.object({
   degree: z.string().nullable(),
   duration: z.string().nullable(),
   regimen: z.string().nullable(),
-  curriculumUrl: z.string().url().nullable(),
+  curriculumUrl: httpUrl.nullable(),
   profile: z.string().nullable(),
 });
 
