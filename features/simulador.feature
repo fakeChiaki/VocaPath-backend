@@ -1,71 +1,49 @@
 # language: es
-Característica: Simular Postulación PAES
-  Como estudiante de 3° o 4° medio
-  Quiero simular mi postulación a una carrera comparando mis puntajes con el puntaje de corte
-  Para saber si tengo posibilidades reales de ingresar antes de rendir la PAES oficial
+Característica: Simular Postulación PAES (UC12)
+  Como estudiante
+  Quiero simular mi postulación a una carrera
+  Para saber si mi puntaje ponderado alcanza el puntaje de corte
 
   Antecedentes:
-    Dado que el estudiante se encuentra en la sección "Simulador" de VocaPath
+    Dado que el estudiante tiene sesión iniciada
 
-  Escenario: Simular postulación con puntajes completos y resultado favorable
-    Dado que el estudiante tiene registrados los siguientes puntajes por materia:
-      | Materia          | Puntaje |
-      | NEM              | 1000    |
-      | Ranking          | 1000    |
-      | Comp. Lectora    | 1000    |
-      | Comp. Matemática | 1000    |
-      | Ciencias         | 1000    |
-    Y la carrera "Medicina - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias
-    Y la carrera "Medicina - UFRO" tiene un puntaje de corte de "882.3"
-    Cuando el estudiante selecciona la carrera "Medicina - UFRO" desde el listado desplegable del simulador
-    Entonces el sistema valida que existen puntajes para todas las materias exigidas
-    Y el sistema calcula el puntaje ponderado utilizando las ponderaciones de la carrera
-    Y el sistema muestra el mensaje "¡Alcanzas el puntaje de corte!"
-    Y el sistema muestra el puntaje ponderado "1000.0", el puntaje de corte "882.3" y la diferencia "+117.7"
-    Y el sistema despliega el desglose ponderado factor por factor
+  Escenario: La simulación se bloquea si faltan puntajes
+    Dado que no tiene registrado un puntaje de "ranking"
+    Y "Medicina" exige un puntaje de "ranking" mayor a 0
+    Cuando el estudiante simula su postulación a "Medicina"
+    Entonces el sistema responde con un código 200 y estado "missing_scores"
+    Y el detalle de puntajes faltantes incluye "ranking"
 
-  Escenario: Bloquear la simulación cuando faltan puntajes registrados
-    Dado que el estudiante no tiene registrado ningún puntaje por materia
-    Y la carrera "Medicina - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora, Comp. Matemática y Ciencias
-    Cuando el estudiante selecciona la carrera "Medicina - UFRO" desde el listado desplegable del simulador
-    Entonces el sistema bloquea la simulación
-    Y el sistema muestra el mensaje "Te faltan puntajes para simular"
-    Y el sistema indica como materias faltantes "NEM, Ranking, Comp. Lectora, Comp. Matemática, Ciencias"
-    Y el sistema muestra el botón "Ir a Mis Puntajes"
-    Y el sistema no calcula ni muestra ningún puntaje ponderado
+  Esquema del escenario: Resultado de la simulación según el puntaje ponderado
+    Dado que el estudiante tiene todos los puntajes exigidos por "Medicina" en <puntaje>
+    Y el puntaje de corte de "Medicina" es 882.3
+    Cuando el estudiante simula su postulación a "Medicina"
+    Entonces el estado de la simulación es "<estado>"
 
-  Escenario: Puntaje ponderado exactamente igual al puntaje de corte
-    Dado que el estudiante tiene registrados puntajes por materia tales que su puntaje ponderado resultante es exactamente "705.4"
-    Y la carrera "Ingeniería Civil Informática - UFRO" exige puntajes en NEM, Ranking, Comp. Lectora y Comp. Matemática
-    Y la carrera "Ingeniería Civil Informática - UFRO" tiene un puntaje de corte de "705.4"
-    Cuando el estudiante selecciona la carrera "Ingeniería Civil Informática - UFRO" desde el listado desplegable del simulador
-    Entonces el sistema calcula un puntaje ponderado de "705.4"
-    Y el sistema indica que el estudiante alcanza el puntaje de corte
-    Y la diferencia mostrada es "0.0"
-    Y el sistema no interpreta el empate como un resultado desfavorable
+    Ejemplos:
+      | puntaje | estado     |
+      | 700     | not_enough |
+      | 950     | success    |
 
-  Escenario: Simular postulación exitosa en carrera con menos requisitos (técnica)
-    Dado que el estudiante tiene registrados los siguientes puntajes por materia:
-      | Materia          | Puntaje |
-      | NEM              | 800     |
-      | Ranking          | 800     |
-      | Comp. Lectora    | 900     |
-      | Comp. Matemática | 900     |
-    Y la carrera "Técnico Universitario en Informática - UFRO" exige puntajes solo en NEM, Ranking, Comp. Lectora y Comp. Matemática
-    Y la carrera "Técnico Universitario en Informática - UFRO" tiene un puntaje de corte de "750.0"
-    Cuando el estudiante selecciona la carrera "Técnico Universitario en Informática - UFRO" desde el listado desplegable del simulador
-    Entonces el sistema calcula el puntaje ponderado utilizando las ponderaciones de la carrera
-    Y el sistema muestra el mensaje "¡Alcanzas el puntaje de corte!"
+  Escenario: Un puntaje ponderado igual al corte alcanza para postular
+    Dado que el estudiante tiene todos los puntajes exigidos por "Ingeniería Civil Informática" en 705.4
+    Cuando el estudiante simula su postulación a "Ingeniería Civil Informática"
+    Entonces el estado de la simulación es "success"
+    Y el puntaje ponderado es 705.4
 
-  Escenario: Simular postulación donde el puntaje no alcanza el corte
-    Dado que el estudiante tiene registrados los siguientes puntajes bajos por materia:
-      | Materia          | Puntaje |
-      | NEM              | 500     |
-      | Ranking          | 500     |
-      | Comp. Lectora    | 500     |
-      | Comp. Matemática | 500     |
-      | Ciencias         | 500     |
-    Y la carrera "Medicina - UFRO" tiene un puntaje de corte de "882.3"
-    Cuando el estudiante selecciona la carrera "Medicina - UFRO" desde el listado desplegable del simulador
-    Entonces el sistema calcula un puntaje ponderado de "500.0"
-    Y el sistema muestra el mensaje "Lamentablemente no alcanzas el puntaje de corte histórico"
+  Escenario: No se puede comparar con una carrera que no publica su corte
+    Dado que el estudiante tiene todos los puntajes exigidos por "Agronomía" en 800
+    Cuando el estudiante simula su postulación a "Agronomía"
+    Entonces el estado de la simulación es "cutoff_unavailable"
+
+  Escenario: Con Historia o Ciencias se usa el mayor de los dos puntajes
+    Dado que el estudiante tiene registrados los siguientes puntajes:
+      | factor     | puntaje |
+      | nem        | 1000    |
+      | ranking    | 1000    |
+      | lectora    | 1000    |
+      | matematica | 1000    |
+      | ciencias   | 800     |
+    Cuando el estudiante simula su postulación a "Ingeniería Comercial"
+    Entonces el estado de la simulación es "success"
+    Y el puntaje ponderado es 980

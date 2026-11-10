@@ -1,0 +1,803 @@
+Comando: pnpm run test:bdd (features Gherkin escritas, sin glue code)
+Resultado: 36 escenarios sin implementar, 146 pasos sin implementar
+
+$ tsx node_modules/@cucumber/cucumber/bin/cucumber.js
+
+Característica: Cerrar Sesión (UC03)
+
+  Escenario: Cerrar sesión revoca la sesión                        # features\cierre-sesion.feature:7
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante cierra sesión
+    ■ Entonces el sistema responde con un código 204
+    ■ Y la cookie "refresh_token" es eliminada
+    ■ Y al renovar la sesión el sistema responde con un código 401
+
+  Escenario: Cerrar sesión funciona aunque el access token haya vencido # features\cierre-sesion.feature:14
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante cierra sesión con un access token vencido
+    ■ Entonces el sistema responde con un código 204
+    ■ Y al renovar la sesión el sistema responde con un código 401
+
+  Escenario: Renovar la sesión rota el refresh token              # features\cierre-sesion.feature:20
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante renueva su sesión
+    ■ Entonces el sistema responde con un código 200
+    ■ Y la respuesta incluye un access token
+    ■ Y el refresh token anterior ya no permite renovar la sesión
+
+Característica: Comparar Carreras (UC10)
+
+  Esquema del escenario: Validación de la cantidad de carreras a comparar # features\comparador.feature:14
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando solicita comparar las carreras "un-solo-id"
+    ■ Entonces el sistema responde con un código 400
+
+  Esquema del escenario: Validación de la cantidad de carreras a comparar # features\comparador.feature:15
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando solicita comparar las carreras "mismo-id,mismo-id"
+    ■ Entonces el sistema responde con un código 400
+
+  Escenario: Comparación exitosa de dos carreras de universidades distintas                                   # features\comparador.feature:17
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando solicita comparar la carrera "Medicina" de "UFRO" con la carrera "Ingeniería Comercial" de "UCT"
+    ■ Entonces el sistema responde con un código 200
+    ■ Y la respuesta contiene exactamente 2 carreras
+
+Característica: Gestionar Carreras Favoritas (UC11)
+
+  Escenario: Marcar una carrera como favorita es una operación idempotente   # features\favoritas.feature:7
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Y la carrera "Medicina" no está marcada como favorita
+    ■ Cuando el estudiante marca "Medicina" como favorita dos veces seguidas
+    ■ Entonces ambas peticiones responden con un código 201
+    ■ Y el listado de favoritas contiene "Medicina" una sola vez
+
+  Escenario: Quitar una carrera de favoritas                # features\favoritas.feature:14
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Y la carrera "Medicina" está marcada como favorita
+    ■ Cuando el estudiante la desmarca
+    ■ Entonces el sistema responde con un código 204
+    ■ Y "Medicina" ya no aparece en el listado de favoritas
+
+  Escenario: No se puede marcar una carrera que no existe              # features\favoritas.feature:21
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante marca una carrera inexistente como favorita
+    ■ Entonces el sistema responde con un código 404
+
+Característica: Iniciar Sesión (UC02)
+
+  Escenario: Inicio de sesión exitoso                                                             # features\inicio-sesion.feature:7
+    ■ Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+    ■ Cuando el estudiante envía sus credenciales correctas al sistema
+    ■ Entonces el sistema responde con un código 200
+    ■ Y la respuesta incluye un access token
+    ■ Y el navegador recibe una cookie "refresh_token" de tipo httpOnly
+
+  Esquema del escenario: Inicio de sesión con credenciales inválidas                              # features\inicio-sesion.feature:22
+    ■ Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+    ■ Cuando el estudiante envía el correo "seba@test.com" y la contraseña "incorrecta123"
+    ■ Entonces el sistema responde con un código 401
+    ■ Y el mensaje de error es "Credenciales inválidas"
+
+  Esquema del escenario: Inicio de sesión con credenciales inválidas                              # features\inicio-sesion.feature:23
+    ■ Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+    ■ Cuando el estudiante envía el correo "inexistente@test.com" y la contraseña "password123"
+    ■ Entonces el sistema responde con un código 401
+    ■ Y el mensaje de error es "Credenciales inválidas"
+
+  Escenario: El correo no distingue mayúsculas ni espacios                                        # features\inicio-sesion.feature:25
+    ■ Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+    ■ Cuando el estudiante envía el correo " SEBA@Test.com " y la contraseña "password123"
+    ■ Entonces el sistema responde con un código 200
+
+  Escenario: Las rutas protegidas exigen un access token válido      # features\inicio-sesion.feature:30
+    ■ Cuando un visitante sin sesión consulta el listado de carreras
+    ■ Entonces el sistema responde con un código 401
+
+Característica: Rendir Prueba Tipo PAES (UC05)
+
+  Escenario: Rendir la prueba de Ciencias requiere elegir una mención                    # features\prueba-paes.feature:7
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando solicita el banco de preguntas de la materia "ciencias" sin indicar mención
+    ■ Entonces el sistema responde con un código 400
+    ■ Y el mensaje de error es "Debes indicar una mención para Ciencias"
+
+  Escenario: Calificación correcta de una prueba rendida               # features\prueba-paes.feature:13
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Y el banco de preguntas de "lectora" tiene 4 preguntas
+    ■ Cuando el estudiante responde correctamente 1 de las 4 preguntas
+    ■ Y envía sus respuestas
+    ■ Entonces el sistema responde con un código 201
+    ■ Y el puntaje calculado es 588
+    ■ Y su puntaje de "lectora" es 588 con origen "paes_attempt"
+
+  Escenario: Retomar la prueba reemplaza el intento anterior                                      # features\prueba-paes.feature:22
+    ■ Dado que el estudiante ya rindió la prueba de "lectora" con puntaje 588
+    ■ Cuando el estudiante vuelve a rendir la prueba de "lectora" respondiendo todo correctamente
+    ■ Entonces el sistema responde con un código 201
+    ■ Y el puntaje calculado es 1000
+    ■ Y solo existe un intento de "lectora" para ese estudiante en la base de datos
+
+Característica: Revisar Puntajes por Materia (UC06)
+
+  Escenario: Registrar un puntaje manualmente               # features\puntajes.feature:10
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante registra el puntaje 850 en "nem"
+    ■ Entonces el sistema responde con un código 200
+    ■ Y su puntaje de "nem" es 850 con origen "manual"
+
+  Esquema del escenario: Rechazo de puntajes fuera de rango # features\puntajes.feature:21
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante registra el puntaje 99 en "nem"
+    ■ Entonces el sistema responde con un código 400
+
+  Esquema del escenario: Rechazo de puntajes fuera de rango  # features\puntajes.feature:22
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante registra el puntaje 1001 en "nem"
+    ■ Entonces el sistema responde con un código 400
+
+  Escenario: Rechazo de una materia inexistente                # features\puntajes.feature:24
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante registra el puntaje 700 en "fisica"
+    ■ Entonces el sistema responde con un código 400
+
+  Escenario: Eliminar un puntaje                                      # features\puntajes.feature:28
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene registrado el puntaje 850 en "nem"
+    ■ Cuando el estudiante elimina su puntaje de "nem"
+    ■ Entonces el sistema responde con un código 204
+    ■ Y "nem" ya no aparece en sus puntajes
+
+  Escenario: Eliminar un puntaje que no existe             # features\puntajes.feature:34
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Cuando el estudiante elimina su puntaje de "ranking"
+    ■ Entonces el sistema responde con un código 404
+
+  Escenario: Un puntaje manual reemplaza al de una prueba rendida             # features\puntajes.feature:38
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante ya rindió la prueba de "lectora" con puntaje 588
+    ■ Cuando el estudiante registra el puntaje 700 en "lectora"
+    ■ Entonces el sistema responde con un código 200
+    ■ Y su puntaje de "lectora" es 700 con origen "manual"
+    ■ Y ya no existe un intento de "lectora" para ese estudiante
+
+Característica: Registrarse (UC01)
+
+  Escenario: Registro exitoso                                                                                           # features\registro.feature:7
+    ■ Dado que no existe una cuenta con correo "nueva@test.com"
+    ■ Cuando el visitante se registra con nombre "Nueva Estudiante", correo "nueva@test.com" y contraseña "password123"
+    ■ Entonces el sistema responde con un código 201
+    ■ Y la respuesta no incluye la contraseña
+    ■ Y el estudiante puede iniciar sesión con correo "nueva@test.com" y contraseña "password123"
+
+  Escenario: No se permite registrar dos veces el mismo correo                                                     # features\registro.feature:14
+    ■ Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+    ■ Cuando el visitante se registra con nombre "Otra Persona", correo "SEBA@Test.com" y contraseña "password123"
+    ■ Entonces el sistema responde con un código 409
+    ■ Y el mensaje de error es "Ya existe una cuenta con ese correo"
+
+  Escenario: Las contraseñas deben coincidir                                                             # features\registro.feature:20
+    ■ Cuando el visitante intenta registrarse con contraseña "password123" y confirmación "otraclave456"
+    ■ Entonces el sistema responde con un código 400
+    ■ Y el mensaje de error es "Las contraseñas no coinciden"
+
+  Esquema del escenario: Datos de registro inválidos                                                  # features\registro.feature:31
+    ■ Cuando el visitante se registra con nombre "A", correo "ok@test.com" y contraseña "password123"
+    ■ Entonces el sistema responde con un código 400
+
+  Esquema del escenario: Datos de registro inválidos                                                     # features\registro.feature:32
+    ■ Cuando el visitante se registra con nombre "Ana", correo "no-es-correo" y contraseña "password123"
+    ■ Entonces el sistema responde con un código 400
+
+  Esquema del escenario: Datos de registro inválidos                                              # features\registro.feature:33
+    ■ Cuando el visitante se registra con nombre "Ana", correo "ok@test.com" y contraseña "corta"
+    ■ Entonces el sistema responde con un código 400
+
+Característica: Simular Postulación PAES (UC12)
+
+  Escenario: La simulación se bloquea si faltan puntajes                       # features\simulador.feature:10
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que no tiene registrado un puntaje de "ranking"
+    ■ Y "Medicina" exige un puntaje de "ranking" mayor a 0
+    ■ Cuando el estudiante simula su postulación a "Medicina"
+    ■ Entonces el sistema responde con un código 200 y estado "missing_scores"
+    ■ Y el detalle de puntajes faltantes incluye "ranking"
+
+  Esquema del escenario: Resultado de la simulación según el puntaje ponderado       # features\simulador.feature:25
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene todos los puntajes exigidos por "Medicina" en 700
+    ■ Y el puntaje de corte de "Medicina" es 882.3
+    ■ Cuando el estudiante simula su postulación a "Medicina"
+    ■ Entonces el estado de la simulación es "not_enough"
+
+  Esquema del escenario: Resultado de la simulación según el puntaje ponderado       # features\simulador.feature:26
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene todos los puntajes exigidos por "Medicina" en 950
+    ■ Y el puntaje de corte de "Medicina" es 882.3
+    ■ Cuando el estudiante simula su postulación a "Medicina"
+    ■ Entonces el estado de la simulación es "success"
+
+  Escenario: Un puntaje ponderado igual al corte alcanza para postular                                     # features\simulador.feature:28
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene todos los puntajes exigidos por "Ingeniería Civil Informática" en 705.4
+    ■ Cuando el estudiante simula su postulación a "Ingeniería Civil Informática"
+    ■ Entonces el estado de la simulación es "success"
+    ■ Y el puntaje ponderado es 705.4
+
+  Escenario: No se puede comparar con una carrera que no publica su corte             # features\simulador.feature:34
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene todos los puntajes exigidos por "Agronomía" en 800
+    ■ Cuando el estudiante simula su postulación a "Agronomía"
+    ■ Entonces el estado de la simulación es "cutoff_unavailable"
+
+  Escenario: Con Historia o Ciencias se usa el mayor de los dos puntajes  # features\simulador.feature:39
+    ■ Dado que el estudiante tiene sesión iniciada
+    ■ Dado que el estudiante tiene registrados los siguientes puntajes:
+        | factor     | puntaje |
+        | nem        | 1000    |
+        | ranking    | 1000    |
+        | lectora    | 1000    |
+        | matematica | 1000    |
+        | ciencias   | 800     |
+    ■ Cuando el estudiante simula su postulación a "Ingeniería Comercial"
+    ■ Entonces el estado de la simulación es "success"
+    ■ Y el puntaje ponderado es 980
+
+Undefined scenarios:
+  1) Cerrar sesión revoca la sesión # features\cierre-sesion.feature:7
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante cierra sesión
+       Entonces el sistema responde con un código 204
+       Y la cookie "refresh_token" es eliminada
+       Y al renovar la sesión el sistema responde con un código 401
+  2) Cerrar sesión funciona aunque el access token haya vencido # features\cierre-sesion.feature:14
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante cierra sesión con un access token vencido
+       Entonces el sistema responde con un código 204
+       Y al renovar la sesión el sistema responde con un código 401
+  3) Renovar la sesión rota el refresh token # features\cierre-sesion.feature:20
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante renueva su sesión
+       Entonces el sistema responde con un código 200
+       Y la respuesta incluye un access token
+       Y el refresh token anterior ya no permite renovar la sesión
+  4) Validación de la cantidad de carreras a comparar # features\comparador.feature:14
+       Dado que el estudiante tiene sesión iniciada
+       Cuando solicita comparar las carreras "un-solo-id"
+       Entonces el sistema responde con un código 400
+  5) Validación de la cantidad de carreras a comparar # features\comparador.feature:15
+       Dado que el estudiante tiene sesión iniciada
+       Cuando solicita comparar las carreras "mismo-id,mismo-id"
+       Entonces el sistema responde con un código 400
+  6) Comparación exitosa de dos carreras de universidades distintas # features\comparador.feature:17
+       Dado que el estudiante tiene sesión iniciada
+       Cuando solicita comparar la carrera "Medicina" de "UFRO" con la carrera "Ingeniería Comercial" de "UCT"
+       Entonces el sistema responde con un código 200
+       Y la respuesta contiene exactamente 2 carreras
+  7) Marcar una carrera como favorita es una operación idempotente # features\favoritas.feature:7
+       Dado que el estudiante tiene sesión iniciada
+       Y la carrera "Medicina" no está marcada como favorita
+       Cuando el estudiante marca "Medicina" como favorita dos veces seguidas
+       Entonces ambas peticiones responden con un código 201
+       Y el listado de favoritas contiene "Medicina" una sola vez
+  8) Quitar una carrera de favoritas # features\favoritas.feature:14
+       Dado que el estudiante tiene sesión iniciada
+       Y la carrera "Medicina" está marcada como favorita
+       Cuando el estudiante la desmarca
+       Entonces el sistema responde con un código 204
+       Y "Medicina" ya no aparece en el listado de favoritas
+  9) No se puede marcar una carrera que no existe # features\favoritas.feature:21
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante marca una carrera inexistente como favorita
+       Entonces el sistema responde con un código 404
+  10) Inicio de sesión exitoso # features\inicio-sesion.feature:7
+       Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+       Cuando el estudiante envía sus credenciales correctas al sistema
+       Entonces el sistema responde con un código 200
+       Y la respuesta incluye un access token
+       Y el navegador recibe una cookie "refresh_token" de tipo httpOnly
+  11) Inicio de sesión con credenciales inválidas # features\inicio-sesion.feature:22
+       Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+       Cuando el estudiante envía el correo "seba@test.com" y la contraseña "incorrecta123"
+       Entonces el sistema responde con un código 401
+       Y el mensaje de error es "Credenciales inválidas"
+  12) Inicio de sesión con credenciales inválidas # features\inicio-sesion.feature:23
+       Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+       Cuando el estudiante envía el correo "inexistente@test.com" y la contraseña "password123"
+       Entonces el sistema responde con un código 401
+       Y el mensaje de error es "Credenciales inválidas"
+  13) El correo no distingue mayúsculas ni espacios # features\inicio-sesion.feature:25
+       Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+       Cuando el estudiante envía el correo " SEBA@Test.com " y la contraseña "password123"
+       Entonces el sistema responde con un código 200
+  14) Las rutas protegidas exigen un access token válido # features\inicio-sesion.feature:30
+       Cuando un visitante sin sesión consulta el listado de carreras
+       Entonces el sistema responde con un código 401
+  15) Rendir la prueba de Ciencias requiere elegir una mención # features\prueba-paes.feature:7
+       Dado que el estudiante tiene sesión iniciada
+       Cuando solicita el banco de preguntas de la materia "ciencias" sin indicar mención
+       Entonces el sistema responde con un código 400
+       Y el mensaje de error es "Debes indicar una mención para Ciencias"
+  16) Calificación correcta de una prueba rendida # features\prueba-paes.feature:13
+       Dado que el estudiante tiene sesión iniciada
+       Y el banco de preguntas de "lectora" tiene 4 preguntas
+       Cuando el estudiante responde correctamente 1 de las 4 preguntas
+       Y envía sus respuestas
+       Entonces el sistema responde con un código 201
+       Y el puntaje calculado es 588
+       Y su puntaje de "lectora" es 588 con origen "paes_attempt"
+  17) Retomar la prueba reemplaza el intento anterior # features\prueba-paes.feature:22
+       Dado que el estudiante ya rindió la prueba de "lectora" con puntaje 588
+       Cuando el estudiante vuelve a rendir la prueba de "lectora" respondiendo todo correctamente
+       Entonces el sistema responde con un código 201
+       Y el puntaje calculado es 1000
+       Y solo existe un intento de "lectora" para ese estudiante en la base de datos
+  18) Registrar un puntaje manualmente # features\puntajes.feature:10
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante registra el puntaje 850 en "nem"
+       Entonces el sistema responde con un código 200
+       Y su puntaje de "nem" es 850 con origen "manual"
+  19) Rechazo de puntajes fuera de rango # features\puntajes.feature:21
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante registra el puntaje 99 en "nem"
+       Entonces el sistema responde con un código 400
+  20) Rechazo de puntajes fuera de rango # features\puntajes.feature:22
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante registra el puntaje 1001 en "nem"
+       Entonces el sistema responde con un código 400
+  21) Rechazo de una materia inexistente # features\puntajes.feature:24
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante registra el puntaje 700 en "fisica"
+       Entonces el sistema responde con un código 400
+  22) Eliminar un puntaje # features\puntajes.feature:28
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene registrado el puntaje 850 en "nem"
+       Cuando el estudiante elimina su puntaje de "nem"
+       Entonces el sistema responde con un código 204
+       Y "nem" ya no aparece en sus puntajes
+  23) Eliminar un puntaje que no existe # features\puntajes.feature:34
+       Dado que el estudiante tiene sesión iniciada
+       Cuando el estudiante elimina su puntaje de "ranking"
+       Entonces el sistema responde con un código 404
+  24) Un puntaje manual reemplaza al de una prueba rendida # features\puntajes.feature:38
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante ya rindió la prueba de "lectora" con puntaje 588
+       Cuando el estudiante registra el puntaje 700 en "lectora"
+       Entonces el sistema responde con un código 200
+       Y su puntaje de "lectora" es 700 con origen "manual"
+       Y ya no existe un intento de "lectora" para ese estudiante
+  25) Registro exitoso # features\registro.feature:7
+       Dado que no existe una cuenta con correo "nueva@test.com"
+       Cuando el visitante se registra con nombre "Nueva Estudiante", correo "nueva@test.com" y contraseña "password123"
+       Entonces el sistema responde con un código 201
+       Y la respuesta no incluye la contraseña
+       Y el estudiante puede iniciar sesión con correo "nueva@test.com" y contraseña "password123"
+  26) No se permite registrar dos veces el mismo correo # features\registro.feature:14
+       Dado que existe una cuenta registrada con correo "seba@test.com" y contraseña "password123"
+       Cuando el visitante se registra con nombre "Otra Persona", correo "SEBA@Test.com" y contraseña "password123"
+       Entonces el sistema responde con un código 409
+       Y el mensaje de error es "Ya existe una cuenta con ese correo"
+  27) Las contraseñas deben coincidir # features\registro.feature:20
+       Cuando el visitante intenta registrarse con contraseña "password123" y confirmación "otraclave456"
+       Entonces el sistema responde con un código 400
+       Y el mensaje de error es "Las contraseñas no coinciden"
+  28) Datos de registro inválidos # features\registro.feature:31
+       Cuando el visitante se registra con nombre "A", correo "ok@test.com" y contraseña "password123"
+       Entonces el sistema responde con un código 400
+  29) Datos de registro inválidos # features\registro.feature:32
+       Cuando el visitante se registra con nombre "Ana", correo "no-es-correo" y contraseña "password123"
+       Entonces el sistema responde con un código 400
+  30) Datos de registro inválidos # features\registro.feature:33
+       Cuando el visitante se registra con nombre "Ana", correo "ok@test.com" y contraseña "corta"
+       Entonces el sistema responde con un código 400
+  31) La simulación se bloquea si faltan puntajes # features\simulador.feature:10
+       Dado que el estudiante tiene sesión iniciada
+       Dado que no tiene registrado un puntaje de "ranking"
+       Y "Medicina" exige un puntaje de "ranking" mayor a 0
+       Cuando el estudiante simula su postulación a "Medicina"
+       Entonces el sistema responde con un código 200 y estado "missing_scores"
+       Y el detalle de puntajes faltantes incluye "ranking"
+  32) Resultado de la simulación según el puntaje ponderado # features\simulador.feature:25
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene todos los puntajes exigidos por "Medicina" en 700
+       Y el puntaje de corte de "Medicina" es 882.3
+       Cuando el estudiante simula su postulación a "Medicina"
+       Entonces el estado de la simulación es "not_enough"
+  33) Resultado de la simulación según el puntaje ponderado # features\simulador.feature:26
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene todos los puntajes exigidos por "Medicina" en 950
+       Y el puntaje de corte de "Medicina" es 882.3
+       Cuando el estudiante simula su postulación a "Medicina"
+       Entonces el estado de la simulación es "success"
+  34) Un puntaje ponderado igual al corte alcanza para postular # features\simulador.feature:28
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene todos los puntajes exigidos por "Ingeniería Civil Informática" en 705.4
+       Cuando el estudiante simula su postulación a "Ingeniería Civil Informática"
+       Entonces el estado de la simulación es "success"
+       Y el puntaje ponderado es 705.4
+  35) No se puede comparar con una carrera que no publica su corte # features\simulador.feature:34
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene todos los puntajes exigidos por "Agronomía" en 800
+       Cuando el estudiante simula su postulación a "Agronomía"
+       Entonces el estado de la simulación es "cutoff_unavailable"
+  36) Con Historia o Ciencias se usa el mayor de los dos puntajes # features\simulador.feature:39
+       Dado que el estudiante tiene sesión iniciada
+       Dado que el estudiante tiene registrados los siguientes puntajes:
+         | factor     | puntaje |
+         | nem        | 1000    |
+         | ranking    | 1000    |
+         | lectora    | 1000    |
+         | matematica | 1000    |
+         | ciencias   | 800     |
+       Cuando el estudiante simula su postulación a "Ingeniería Comercial"
+       Entonces el estado de la simulación es "success"
+       Y el puntaje ponderado es 980
+
+2 hooks (2 passed)
+36 scenarios (36 undefined)
+218 steps (72 passed, 146 undefined)
+0m 29.967s (0m 29.883s executing your code)
+
+You can implement missing steps with the snippets below:
+
+Given('que el estudiante tiene sesión iniciada', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante cierra sesión', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema responde con un código {int}', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema responde con un código {float}', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la cookie {string} es eliminada', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('al renovar la sesión el sistema responde con un código {int}', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('al renovar la sesión el sistema responde con un código {float}', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante cierra sesión con un access token vencido', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante renueva su sesión', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la respuesta incluye un access token', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el refresh token anterior ya no permite renovar la sesión', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('solicita comparar las carreras {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('solicita comparar la carrera {string} de {string} con la carrera {string} de {string}', function (string, string2, string3, string4) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la respuesta contiene exactamente {int} carreras', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la respuesta contiene exactamente {float} carreras', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('la carrera {string} no está marcada como favorita', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante marca {string} como favorita dos veces seguidas', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('ambas peticiones responden con un código {int}', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('ambas peticiones responden con un código {float}', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el listado de favoritas contiene {string} una sola vez', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('la carrera {string} está marcada como favorita', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante la desmarca', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('{string} ya no aparece en el listado de favoritas', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante marca una carrera inexistente como favorita', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que existe una cuenta registrada con correo {string} y contraseña {string}', function (string, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante envía sus credenciales correctas al sistema', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el navegador recibe una cookie {string} de tipo httpOnly', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante envía el correo {string} y la contraseña {string}', function (string, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el mensaje de error es {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('un visitante sin sesión consulta el listado de carreras', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('solicita el banco de preguntas de la materia {string} sin indicar mención', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('el banco de preguntas de {string} tiene {int} preguntas', function (string, int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('el banco de preguntas de {string} tiene {float} preguntas', function (string, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante responde correctamente {int} de las {int} preguntas', function (int, int2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante responde correctamente {int} de las {float} preguntas', function (int, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante responde correctamente {float} de las {int} preguntas', function (float, int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante responde correctamente {float} de las {float} preguntas', function (float, float2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('envía sus respuestas', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el puntaje calculado es {int}', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el puntaje calculado es {float}', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('su puntaje de {string} es {int} con origen {string}', function (string, int, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('su puntaje de {string} es {float} con origen {string}', function (string, float, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante ya rindió la prueba de {string} con puntaje {int}', function (string, int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante ya rindió la prueba de {string} con puntaje {float}', function (string, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante vuelve a rendir la prueba de {string} respondiendo todo correctamente', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('solo existe un intento de {string} para ese estudiante en la base de datos', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante registra el puntaje {int} en {string}', function (int, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante registra el puntaje {float} en {string}', function (float, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante tiene registrado el puntaje {int} en {string}', function (int, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante tiene registrado el puntaje {float} en {string}', function (float, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante elimina su puntaje de {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('{string} ya no aparece en sus puntajes', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('ya no existe un intento de {string} para ese estudiante', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que no existe una cuenta con correo {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el visitante se registra con nombre {string}, correo {string} y contraseña {string}', function (string, string2, string3) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('la respuesta no incluye la contraseña', function () {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el estudiante puede iniciar sesión con correo {string} y contraseña {string}', function (string, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el visitante intenta registrarse con contraseña {string} y confirmación {string}', function (string, string2) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que no tiene registrado un puntaje de {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('{string} exige un puntaje de {string} mayor a {int}', function (string, string2, int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('{string} exige un puntaje de {string} mayor a {float}', function (string, string2, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+When('el estudiante simula su postulación a {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema responde con un código {int} y estado {string}', function (int, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el sistema responde con un código {float} y estado {string}', function (float, string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el detalle de puntajes faltantes incluye {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante tiene todos los puntajes exigidos por {string} en {int}', function (string, int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante tiene todos los puntajes exigidos por {string} en {float}', function (string, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('el puntaje de corte de {string} es {float}', function (string, float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el estado de la simulación es {string}', function (string) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el puntaje ponderado es {float}', function (float) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Given('que el estudiante tiene registrados los siguientes puntajes:', function (dataTable) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+Then('el puntaje ponderado es {int}', function (int) {
+  // Write code here that turns the phrase above into concrete actions
+  return 'pending';
+});
+
+[ELIFECYCLE] Command failed with exit code 1.
