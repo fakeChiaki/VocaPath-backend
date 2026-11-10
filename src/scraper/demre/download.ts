@@ -21,6 +21,9 @@ export function download(url: string, redirects = 3): Promise<Uint8Array> {
         res.on('end', () => resolve(new Uint8Array(Buffer.concat(chunks))));
         res.on('error', reject);
       })
-      .on('error', reject);
+      .on('error', reject)
+      .setTimeout(60_000, function (this: ReturnType<typeof https.get>) {
+        this.destroy(new Error('Tiempo de espera agotado al descargar desde DEMRE'));
+      });
   });
 }

@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { z } from 'zod';
+import { httpUrl } from '../schemas.js';
 import { summarize } from '../text.js';
 
 const EXCLUDED_SLUG = /vespertin|online|prosecucion|semipresencial/;
@@ -13,7 +14,7 @@ export const UautonomaCareerSchema = z.object({
   regimen: z.string().nullable(),
   firstSelectedScore: z.number().nullable(),
   cutoffScore: z.number().nullable(),
-  curriculumUrl: z.string().url().nullable(),
+  curriculumUrl: httpUrl.nullable(),
   profile: z.string().nullable(),
 });
 

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { DRIZZLE_CLIENT } from '../database/database.constants.js';
 import type { DrizzleDb } from '../database/database.types.js';
 import { users } from '../database/schema/index.js';
@@ -15,7 +15,11 @@ export class UsersService {
   constructor(@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleDb) {}
 
   async findByEmail(email: string) {
-    const [user] = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await this.db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.email})`, email.trim().toLowerCase()))
+      .limit(1);
     return user ?? null;
   }
 
@@ -25,7 +29,10 @@ export class UsersService {
   }
 
   async create(input: CreateUserInput) {
-    const [user] = await this.db.insert(users).values(input).returning();
+    const [user] = await this.db
+      .insert(users)
+      .values({ ...input, email: input.email.trim().toLowerCase() })
+      .returning();
     return user;
   }
 }
