@@ -7,7 +7,6 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "test:bdd": "tsx node_modules/@cucumber/cucumber/bin/cucumber.js",
     "build": "nest build",
     "deploy": "nest deploy",
@@ -17,7 +16,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "oxlint src/ test/",
-    "test": "vitest run",
+    "test": "vitest run --project unit",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
@@ -25,7 +24,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/database/seed.ts",
-    "scrape": "nest build && node dist/scraper/run.js"
+    "scrape": "nest build && node dist/scraper/run.js",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:cov:unit": "vitest run --project unit --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^12.4.1",
